@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         prefs = PreferencesManager(this)
 
+        // Track live app open
+        com.astroframe.tv.analytics.AnalyticsTracker.trackAppOpen("main_activity")
+
         setupButtons()
         observeWorkManager()
         refreshUiState()

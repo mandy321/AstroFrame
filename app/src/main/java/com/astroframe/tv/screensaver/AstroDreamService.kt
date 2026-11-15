@@ -57,6 +57,9 @@ class AstroDreamService : DreamService() {
         super.onDreamingStarted()
         Log.d(TAG, "AstroFrame Screensaver started dreaming")
 
+        // Track live screensaver activation
+        com.astroframe.tv.analytics.AnalyticsTracker.trackScreensaverStarted(prefs.screensaverRotationSeconds)
+
         reloadFiles()
 
         if (imageFiles.isEmpty()) {

@@ -22,6 +22,7 @@ Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater & native scr
 * **Easy Remote Dialog Pickers**: Quickly select intervals (15m, 30m, 1h, 3h, 6h, 24h) and art sources via native D-pad choice dialogs.
 * **Automatic Storage Cleanup**: Auto-deletes wallpapers older than 48 hours and caps storage at max 10 images (under 25MB total).
 * **Projectivy Launcher Native Integration**: Seamlessly saves wallpapers to `/sdcard/Pictures/AstroFrame/`.
+* **Privacy-First Live Analytics**: Lightweight PostHog telemetry to monitor active TV devices, wallpaper updates, and screensaver performance with zero personal tracking.
 
 ---
 

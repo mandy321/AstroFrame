@@ -115,6 +115,13 @@ class ApodWallpaperWorker(
             prefs.lastUpdatedMs = System.currentTimeMillis()
             prefs.lastImagePath = savedFile.absolutePath
 
+            // Track live background wallpaper cycle
+            com.astroframe.tv.analytics.AnalyticsTracker.trackWallpaperUpdated(
+                artSource = apod.sourceBadge,
+                title = apod.title,
+                dateOrPeriod = apod.date
+            )
+
             Log.d(TAG, "Successfully updated wallpaper: ${apod.title} (${savedFile.absolutePath})")
             Result.success()
         } else {

@@ -23,10 +23,12 @@ android {
         applicationId = "com.astroframe.tv"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.2.0"
+        versionCode = 5
+        versionName = "1.2.1"
 
         buildConfigField("String", "NASA_API_KEY", "\"$nasaApiKey\"")
+        buildConfigField("String", "POSTHOG_API_KEY", "\"phc_xPxgwuPe2FD7dV4mJYSBeVbzbicvF3KMRxb2z6BEUZCZ\"")
+        buildConfigField("String", "POSTHOG_HOST", "\"https://us.i.posthog.com\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -67,4 +69,7 @@ dependencies {
 
     // OkHttp for reliable network calls
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // PostHog Analytics for live active user & install tracking
+    implementation("com.posthog:posthog-android:3.+")
 }
