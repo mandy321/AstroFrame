@@ -32,12 +32,12 @@ Once AstroFrame is installed on your Android TV:
 ### Step 2: Configure Projectivy Launcher
 1. On your Android TV home screen, open **Projectivy Settings** (the gear icon ⚙️).
 2. Go to **Appearance** $\rightarrow$ **Wallpaper**.
-3. Under **Wallpaper Type**, select **"Image (slideshow)"** (or **"Image (single)"**).
-4. Select the image source folder/path:
+3. Under **Wallpaper Type**, select **"User Defined Folder"** or **"Image (slideshow)"**.
+4. In the settings list, select the **Uri** field and enter the exact URI:
    ```text
-   /storage/emulated/0/Pictures/AstroFrame
+   file:///storage/emulated/0/Pictures/AstroFrame
    ```
-   *(Or browse: Internal Storage $\rightarrow$ `Pictures` $\rightarrow$ `AstroFrame`)*.
+   *(Note: Type the `file:///` prefix and press **Enter / OK** on your TV remote to save)*.
 5. In Projectivy's **Slideshow interval**, set it to **30 minutes** (to match AstroFrame's schedule).
 6. Return to your home screen—your background is now an astronomical museum frame!
 

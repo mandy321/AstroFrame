@@ -14,10 +14,10 @@
 
 1. Open Projectivy Settings (gear icon).
 2. Select: Appearance → Wallpaper.
-3. Choose "Wallpaper type" → "Image (slideshow)" or "Image (single)".
-4. Set the image path / folder to:
-    /storage/emulated/0/Pictures/AstroFrame
-    (or select Pictures → AstroFrame via file picker).
+3. Choose "Wallpaper type" → "User Defined Folder" or "Image (slideshow)".
+4. Click on the "Uri" field and enter:
+    file:///storage/emulated/0/Pictures/AstroFrame
+    (press Enter/OK on remote to save).
 5. (Optional) Set Slideshow interval to 30 minutes to match this app!]]></string>
 </resources>
 
