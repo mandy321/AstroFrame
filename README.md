@@ -10,6 +10,29 @@ Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater & native scr
   <a href="https://github.com/mandy321/AstroFrame"><img src="https://komarev.com/ghpvc/?username=mandy321-astroframe&style=for-the-badge&color=0EA5E9&label=REPO%20VIEWS" alt="Repo Views"></a>
 </p>
 
+<p align="center">
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.2.1.apk">
+    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.2.1-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
+  </a>
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest">
+    <img src="https://img.shields.io/badge/📦_ALL_RELEASES-GITHUB-blue?style=for-the-badge&logo=github&color=2563EB" alt="All Releases" height="40">
+  </a>
+</p>
+
+---
+
+## 📥 Direct APK Download
+
+| Release | Architecture | Direct Download Link | Release Page |
+| :--- | :--- | :--- | :--- |
+| **v1.2.1 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.2.1.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.2.1.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
+| **All Releases** | Archives & History | [Browse All Releases](https://github.com/mandy321/AstroFrame/releases) | — |
+
+#### Quick Install to TV via ADB:
+```bash
+adb install -r AstroFrame-v1.2.1.apk
+```
+
 ---
 
 ## ✨ Features
