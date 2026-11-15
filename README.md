@@ -64,6 +64,31 @@ adb connect <YOUR_TV_IP_ADDRESS>:5555
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
+## 🔑 NASA API Key & Authentication
+
+### 1. Works Out-of-the-Box (No API Key Required!)
+* By default, **AstroFrame requires zero API keys or accounts**.
+* It connects directly to the official **`science.nasa.gov`** open platform and **The Met Museum Open Access API**, which are publicly available without rate limits or registration.
+
+### 2. (Optional) Using Your Own NASA API Key
+If you want to use your own personal API key from [api.nasa.gov](https://api.nasa.gov) for legacy fallback:
+
+* **In the Android TV App**:
+  * Open AstroFrame on your TV.
+  * Select **"NASA API Key"** in the settings column.
+  * Enter your custom key and click **Save**.
+
+* **When Building from Source**:
+  * Create or open `local.properties` in the project root:
+    ```properties
+    NASA_API_KEY=your_personal_key_here
+    ```
+  * Or export it as an environment variable before building:
+    ```bash
+    export NASA_API_KEY=your_personal_key_here
+    ./gradlew assembleRelease
+    ```
+
 ---
 
 ## ⚙️ Configuration & Customization

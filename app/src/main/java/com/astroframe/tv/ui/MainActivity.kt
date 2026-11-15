@@ -72,7 +72,12 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Mode set to $modeName", Toast.LENGTH_SHORT).show()
         }
 
-        // 6. Setup Guide Dialog
+        // 6. NASA API Key Dialog
+        binding.btnApiKey.setOnClickListener {
+            showApiKeyDialog()
+        }
+
+        // 7. Setup Guide Dialog
         binding.btnSetupGuide.setOnClickListener {
             showProjectivyGuideDialog()
         }
@@ -233,5 +238,31 @@ class MainActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    private fun showApiKeyDialog() {
+        val input = android.widget.EditText(this).apply {
+            setText(prefs.apiKey)
+            hint = "Enter NASA API key (or leave blank)"
+            setSingleLine(true)
+            setTextColor(android.graphics.Color.WHITE)
+            setPadding(40, 30, 40, 30)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("NASA APOD API Key")
+            .setMessage("The app works out of the box without any key! If you have your own personal key from api.nasa.gov, you can enter it below:")
+            .setView(input)
+            .setPositiveButton("Save") { _, _ ->
+                val newKey = input.text.toString().trim()
+                prefs.apiKey = newKey
+                Toast.makeText(this, "API Key saved", Toast.LENGTH_SHORT).show()
+            }
+            .setNeutralButton("Reset Default") { _, _ ->
+                prefs.apiKey = com.astroframe.tv.BuildConfig.NASA_API_KEY
+                Toast.makeText(this, "Reset to default configuration", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

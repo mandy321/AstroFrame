@@ -194,6 +194,19 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Custom API Key Button -->
+            <Button
+                android:id="@+id/btnApiKey"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="NASA API Key"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
             <!-- Setup Guide Button -->
             <Button
                 android:id="@+id/btnSetupGuide"
