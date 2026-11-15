@@ -280,7 +280,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateScreensaverButtonText() {
         val sec = prefs.screensaverRotationSeconds
         val label = if (sec == 0) "None (Static)" else formatSeconds(sec)
-        binding.btnScreensaverRotation.text = "Screensaver: $label"
+        binding.btnScreensaverRotation.text = "Photo Rotation: $label"
     }
 
     private fun formatSeconds(sec: Int): String {
@@ -294,12 +294,12 @@ class MainActivity : AppCompatActivity() {
     private fun showScreensaverRotationDialog() {
         val options = PreferencesManager.SCREENSAVER_ROTATION_OPTIONS
         val labels = options.map {
-            if (it == 0) "None (Static - Hold Current Wallpaper)" else formatSeconds(it)
+            if (it == 0) "None (Static - Hold Current Artwork)" else formatSeconds(it)
         }.toTypedArray()
         val currentIndex = options.indexOf(prefs.screensaverRotationSeconds).coerceAtLeast(0)
 
         AlertDialog.Builder(this)
-            .setTitle("Screensaver Photo Rotation")
+            .setTitle("Screensaver Photo Rotation Speed")
             .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
                 val selectedSec = options[which]
                 prefs.screensaverRotationSeconds = selectedSec

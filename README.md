@@ -1,6 +1,14 @@
 # 🌌 AstroFrame (Android TV)
 
-Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater with embedded educational context for **Android TV** and **Projectivy Launcher**.
+Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater & native screensaver with contextual art captions for **Android TV** and **Projectivy Launcher**.
+
+<p align="center">
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest"><img src="https://img.shields.io/github/v/release/mandy321/AstroFrame?style=for-the-badge&color=7C3AED&label=LATEST%20RELEASE" alt="Latest Release"></a>
+  <a href="https://github.com/mandy321/AstroFrame/releases"><img src="https://img.shields.io/github/downloads/mandy321/AstroFrame/total?style=for-the-badge&logo=github&color=2563EB&label=TOTAL%20DOWNLOADS" alt="Total Downloads"></a>
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest"><img src="https://img.shields.io/github/downloads/mandy321/AstroFrame/latest/total?style=for-the-badge&color=059669&label=LATEST%20DOWNLOADS" alt="Latest Downloads"></a>
+  <a href="https://github.com/mandy321/AstroFrame/stargazers"><img src="https://img.shields.io/github/stars/mandy321/AstroFrame?style=for-the-badge&logo=star&color=F59E0B&label=STARS" alt="Stars"></a>
+  <a href="https://github.com/mandy321/AstroFrame"><img src="https://komarev.com/ghpvc/?username=mandy321-astroframe&style=for-the-badge&color=0EA5E9&label=REPO%20VIEWS" alt="Repo Views"></a>
+</p>
 
 ---
 

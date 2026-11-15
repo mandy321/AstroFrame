@@ -207,12 +207,12 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Screensaver Rotation Button -->
+            <!-- Screensaver Photo Rotation Button -->
             <Button
                 android:id="@+id/btnScreensaverRotation"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:text="Screensaver: 1 Min"
+                android:text="Photo Rotation: 1 Min"
                 android:background="@drawable/tv_button_bg"
                 android:textColor="@color/text_primary"
                 android:textSize="15sp"

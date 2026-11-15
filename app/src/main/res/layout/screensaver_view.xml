@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <!-- Secondary image view for cross-fade transitions -->
+    <ImageView
+        android:id="@+id/imgScreensaverBack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="Screensaver Image" />
+
+    <!-- Primary image view on top -->
+    <ImageView
+        android:id="@+id/imgScreensaverFront"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="Screensaver Image" />
+
+</FrameLayout>
+
