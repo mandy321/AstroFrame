@@ -65,6 +65,32 @@ AstroFrame now includes Android's native **`DreamService` (Screensaver)** built 
 
 ---
 
+## 📺 Device Compatibility Checklist
+
+| Device | Installation | Wallpaper & Projectivy | System Screensaver |
+| :--- | :--- | :--- | :--- |
+| **NVIDIA Shield TV** (Shield / Pro) | Standard sideload / ADB | ⭐ 100% Native | 100% Native in TV Settings |
+| **Google TV** (Chromecast, Sony, TCL, Hisense) | Standard sideload / ADB | ⭐ 100% Native (via Projectivy / FLauncher) | 100% Native in TV Settings |
+| **Amazon Fire TV Stick** (Fire OS 6, 7, 8) | Via Downloader app or ADB | ⭐ 100% Native | Native via Projectivy Idle (or 1-line ADB command) |
+| **Generic Android TV / Projectors** (Mi Box, Mecool, Formuler, XGIMI) | Standard sideload / ADB | ⭐ 100% Native | 100% Native in TV Settings |
+
+### Device Notes:
+
+* **NVIDIA Shield & Google TV**:
+  * Fully plug-and-play. AstroFrame's native `DreamService` automatically appears in Android TV's *Settings $\rightarrow$ Device Preferences / System $\rightarrow$ Screensaver*.
+
+* **Amazon Fire TV Stick**:
+  * The background wallpaper updater and Projectivy Launcher work 100% natively on Fire OS.
+  * To use the system-wide screensaver on Firestick (bypassing Amazon's ad screensaver), you can either:
+    1. **Method A (Zero ADB)**: Use Projectivy's built-in Idle Mode on your home screen.
+    2. **Method B (System-Wide via ADB)**: Run this single ADB command once to set AstroFrame as your default Firestick screensaver:
+       ```bash
+       adb shell settings put secure screensaver_components com.astroframe.tv/.screensaver.AstroDreamService
+       adb shell settings put secure screensaver_enabled 1
+       ```
+
+---
+
 ## 🚀 Building & Installing
 
 ### Prerequisites
