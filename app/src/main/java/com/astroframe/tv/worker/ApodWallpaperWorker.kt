@@ -75,7 +75,7 @@ class ApodWallpaperWorker(
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val prefs = PreferencesManager(context)
-        val apiKey = prefs.apiKey.ifBlank { PreferencesManager.DEFAULT_API_KEY }
+        val apiKey = prefs.apiKey.ifBlank { com.astroframe.tv.BuildConfig.NASA_API_KEY }
         val apiClient = ApodApiClient()
         val imageProcessor = ImageProcessor(context)
 
