@@ -33,8 +33,10 @@ class PreferencesManager(context: Context) {
         private const val KEY_LAST_UPDATED_MS = "last_updated_ms"
         private const val KEY_LAST_IMAGE_PATH = "last_image_path"
         private const val KEY_ART_SOURCE = "art_source"
+        private const val KEY_SCREENSAVER_ROTATION = "screensaver_rotation_sec"
 
         val INTERVAL_OPTIONS = listOf(15, 30, 60, 180, 360, 1440)
+        val SCREENSAVER_ROTATION_OPTIONS = listOf(0, 30, 60, 120, 300)
     }
 
     var apiKey: String
@@ -90,4 +92,8 @@ class PreferencesManager(context: Context) {
             }
         }
         set(value) = prefs.edit().putString(KEY_ART_SOURCE, value.name).apply()
+
+    var screensaverRotationSeconds: Int
+        get() = prefs.getInt(KEY_SCREENSAVER_ROTATION, 60)
+        set(value) = prefs.edit().putInt(KEY_SCREENSAVER_ROTATION, value).apply()
 }

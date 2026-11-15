@@ -77,7 +77,17 @@ class MainActivity : AppCompatActivity() {
             showApiKeyDialog()
         }
 
-        // 7. Setup Guide Dialog
+        // 7. Screensaver Rotation Dialog
+        binding.btnScreensaverRotation.setOnClickListener {
+            showScreensaverRotationDialog()
+        }
+
+        // 8. Open TV Screensaver Settings Shortcut
+        binding.btnScreensaverSettings.setOnClickListener {
+            openSystemScreensaverSettings()
+        }
+
+        // 9. Setup Guide Dialog
         binding.btnSetupGuide.setOnClickListener {
             showProjectivyGuideDialog()
         }
@@ -117,6 +127,7 @@ class MainActivity : AppCompatActivity() {
         updateArtSourceButtonText()
         updateIntervalButtonText()
         updateModeButtonText()
+        updateScreensaverButtonText()
 
         val lastPath = prefs.lastImagePath
         if (lastPath.isNotBlank()) {
@@ -264,5 +275,58 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun updateScreensaverButtonText() {
+        val sec = prefs.screensaverRotationSeconds
+        val label = if (sec == 0) "None (Static)" else formatSeconds(sec)
+        binding.btnScreensaverRotation.text = "Screensaver: $label"
+    }
+
+    private fun formatSeconds(sec: Int): String {
+        return when {
+            sec < 60 -> "$sec Sec"
+            sec == 60 -> "1 Min"
+            else -> "${sec / 60} Mins"
+        }
+    }
+
+    private fun showScreensaverRotationDialog() {
+        val options = PreferencesManager.SCREENSAVER_ROTATION_OPTIONS
+        val labels = options.map {
+            if (it == 0) "None (Static - Hold Current Wallpaper)" else formatSeconds(it)
+        }.toTypedArray()
+        val currentIndex = options.indexOf(prefs.screensaverRotationSeconds).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle("Screensaver Photo Rotation")
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                val selectedSec = options[which]
+                prefs.screensaverRotationSeconds = selectedSec
+                updateScreensaverButtonText()
+                val text = if (selectedSec == 0) "Screensaver will hold the current wallpaper" else "Screensaver will cycle every ${labels[which]}"
+                Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun openSystemScreensaverSettings() {
+        try {
+            val intent = android.content.Intent("android.settings.DREAM_SETTINGS").apply {
+                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            startActivity(intent)
+        } catch (e: Exception) {
+            try {
+                val fallbackIntent = android.content.Intent(android.provider.Settings.ACTION_SETTINGS).apply {
+                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(fallbackIntent)
+            } catch (e2: Exception) {
+                Toast.makeText(this, "Open TV Settings > Device Preferences > Screensaver", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

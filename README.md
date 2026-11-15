@@ -52,17 +52,16 @@ Projectivy Launcher has built-in idle detection that can hide your apps and turn
 3. Set **Image transition** to **"Zoom"** or **"Pan & Zoom"** (creates a slow, cinematic Ken Burns camera drift across the cosmos or artwork).
 4. When left idle on the home screen, Projectivy's UI rows fade away, leaving only the full-screen 4K artwork and readable caption card!
 
-### Method 2: System-Wide Android TV Screensaver (Works Everywhere)
-If you want the screensaver to launch automatically when you pause Netflix, YouTube, or any app:
-1. Install **Photo Gallery and Screensaver** (or **Aerial Views**) from the Android TV Play Store.
-2. In the screensaver app settings, choose **Local Storage / Folder** and select:
-   ```text
-   /storage/emulated/0/Pictures/AstroFrame
-   ```
-3. In Android TV Settings $\rightarrow$ **Device Preferences** (or **System**) $\rightarrow$ **Screensaver**:
-   * Set **Screensaver** to your installed app.
-   * Set **When to start** (e.g., *After 5 minutes of inactivity*).
-4. Whenever your TV goes idle on any app, it will transition into the AstroFrame art gallery!
+### Method 2: Native Android TV Screensaver (Works Inside SmartTube, YouTube, Everywhere!)
+AstroFrame now includes Android's native **`DreamService` (Screensaver)** built right into the app:
+1. Open AstroFrame on your TV.
+2. Under **"Screensaver Photo Rotation"**, choose your preferred rotation speed:
+   * **None (Static)**: Holds the latest wallpaper image without rotating.
+   * **30 Seconds**, **1 Minute**, **2 Minutes**, or **5 Minutes**: Smoothly cross-fades through all stored artworks.
+3. Click the cyan **"Set as TV Screensaver 📺"** button in AstroFrame (or go to Android TV Settings $\rightarrow$ **Device Preferences / System** $\rightarrow$ **Screensaver**).
+4. Select **"AstroFrame Screensaver"** from the list.
+5. Set your idle timeout (e.g. *5 minutes*).
+6. Whenever you pause SmartTube, watch a movie, or leave any app idle, AstroFrame's 4K cosmos and museum artworks will smoothly take over full-screen! Pressing any button on your remote wakes the TV instantly.
 
 ---
 

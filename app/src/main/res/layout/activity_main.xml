@@ -207,6 +207,32 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Screensaver Rotation Button -->
+            <Button
+                android:id="@+id/btnScreensaverRotation"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Screensaver: 1 Min"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Set as TV Screensaver Shortcut -->
+            <Button
+                android:id="@+id/btnScreensaverSettings"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Set as TV Screensaver 📺"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_cyan"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
             <!-- Setup Guide Button -->
             <Button
                 android:id="@+id/btnSetupGuide"
