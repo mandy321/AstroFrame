@@ -41,6 +41,31 @@ Once AstroFrame is installed on your Android TV:
 
 ---
 
+## 🖼️ Using as a Screensaver / Ambient Frame
+
+You can turn AstroFrame into an ambient screensaver using either of these two methods:
+
+### Method 1: Projectivy Native Ambient Mode (Zero Extra Apps)
+Projectivy Launcher has built-in idle detection that can hide your apps and turn your TV into a clean art frame:
+1. Open **Projectivy Settings** $\rightarrow$ **Appearance** $\rightarrow$ **Wallpaper**.
+2. Set **Display mode** to **"Always visible"**.
+3. Set **Image transition** to **"Zoom"** or **"Pan & Zoom"** (creates a slow, cinematic Ken Burns camera drift across the cosmos or artwork).
+4. When left idle on the home screen, Projectivy's UI rows fade away, leaving only the full-screen 4K artwork and readable caption card!
+
+### Method 2: System-Wide Android TV Screensaver (Works Everywhere)
+If you want the screensaver to launch automatically when you pause Netflix, YouTube, or any app:
+1. Install **Photo Gallery and Screensaver** (or **Aerial Views**) from the Android TV Play Store.
+2. In the screensaver app settings, choose **Local Storage / Folder** and select:
+   ```text
+   /storage/emulated/0/Pictures/AstroFrame
+   ```
+3. In Android TV Settings $\rightarrow$ **Device Preferences** (or **System**) $\rightarrow$ **Screensaver**:
+   * Set **Screensaver** to your installed app.
+   * Set **When to start** (e.g., *After 5 minutes of inactivity*).
+4. Whenever your TV goes idle on any app, it will transition into the AstroFrame art gallery!
+
+---
+
 ## 🚀 Building & Installing
 
 ### Prerequisites
