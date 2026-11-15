@@ -35,6 +35,31 @@ adb install -r AstroFrame-v1.2.1.apk
 
 ---
 
+## 📸 Screenshots & Visual Preview
+
+<div align="center">
+  <table style="border: none; width: 100%;">
+    <tr>
+      <td width="50%" align="center">
+        <b>🎨 The Met Museum (Fine Art with Museum Gold Badges)</b><br>
+        <a href="screenshots/preview_the_met.jpg"><img src="screenshots/preview_the_met.jpg" alt="The Met Museum Preview" width="100%"></a>
+      </td>
+      <td width="50%" align="center">
+        <b>🚀 NASA Cosmos (4K APOD with NASA Cyan Badges)</b><br>
+        <a href="screenshots/preview_nasa_apod.jpg"><img src="screenshots/preview_nasa_apod.jpg" alt="NASA Cosmos Preview" width="100%"></a>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+        <br><b>📺 Android TV Remote-Friendly D-Pad Interface</b><br>
+        <a href="screenshots/preview_tv_app.png"><img src="screenshots/preview_tv_app.png" alt="AstroFrame TV Interface" width="85%"></a>
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
 ## ✨ Features
 
 * **Dual Art Collections**:
