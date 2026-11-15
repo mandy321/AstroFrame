@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">AstroFrame</string>
+    <string name="title_preview">Current Wallpaper Preview</string>
+    <string name="btn_refresh">Update Wallpaper Now</string>
+    <string name="btn_overlay_pos">Overlay Position: %s</string>
+    <string name="btn_interval">Update Interval: %s</string>
+    <string name="btn_source">Photo Source: %s</string>
+    <string name="btn_setup_guide">Projectivy Setup Guide</string>
+    <string name="no_wallpaper_yet">No wallpaper generated yet. Click \"Update Wallpaper Now\" to fetch your first NASA APOD image!</string>
+    <string name="updating">Fetching latest 4K APOD from NASA…</string>
+    <string name="update_success">Wallpaper successfully generated and saved!</string>
+    <string name="projectivy_guide_title">How to link Projectivy Launcher</string>
+    <string name="projectivy_guide_content"><![CDATA[Follow these 4 simple steps in Projectivy Launcher:
+
+1. Open Projectivy Settings (gear icon).
+2. Select: Appearance → Wallpaper.
+3. Choose "Wallpaper type" → "Image (slideshow)" or "Image (single)".
+4. Set the image path / folder to:
+    /storage/emulated/0/Pictures/AstroFrame
+    (or select Pictures → AstroFrame via file picker).
+5. (Optional) Set Slideshow interval to 30 minutes to match this app!]]></string>
+</resources>
+

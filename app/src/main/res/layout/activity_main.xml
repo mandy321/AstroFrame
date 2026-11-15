@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="32dp"
+    android:background="@color/bg_dark">
+
+    <!-- Left Column: Live Preview & Metadata -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="6"
+        android:orientation="vertical"
+        android:paddingEnd="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_preview"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent_blue"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 16:9 Aspect Frame for Preview -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/tv_button_bg">
+
+            <ImageView
+                android:id="@+id/imgPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/title_preview" />
+
+            <TextView
+                android:id="@+id/tvEmptyState"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="24dp"
+                android:textColor="@color/text_secondary"
+                android:textSize="16sp"
+                android:text="@string/no_wallpaper_yet" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- Current Info Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/tv_button_bg"
+            android:padding="16dp"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/tvCurrentTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No Title"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/tvCurrentDateCredit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Date • NASA APOD"
+                android:textColor="@color/accent_cyan"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvCurrentExplanation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description will appear here."
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginTop="6dp" />
+
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status: Ready"
+                android:textColor="@color/text_tertiary"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Right Column: Settings & Remote Actions -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Controls &amp; Settings"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Primary Action: Update Now -->
+            <Button
+                android:id="@+id/btnRefreshNow"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/btn_refresh"
+                android:background="@drawable/tv_button_primary_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Overlay Position Toggle -->
+            <Button
+                android:id="@+id/btnOverlayPos"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Overlay: Top Left"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Interval Toggle -->
+            <Button
+                android:id="@+id/btnInterval"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Interval: 30 Mins"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Photo Mode Toggle -->
+            <Button
+                android:id="@+id/btnMode"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Mode: Random Archive"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Setup Guide Button -->
+            <Button
+                android:id="@+id/btnSetupGuide"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="@string/btn_setup_guide"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_cyan"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Storage Location Hint -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Target Folder for Projectivy:\n/sdcard/Pictures/AstroFrame"
+                android:textColor="@color/text_tertiary"
+                android:textSize="12sp"
+                android:lineSpacingExtra="3dp"
+                android:padding="8dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
+

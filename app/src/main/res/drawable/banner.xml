@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp"
+    android:height="180dp"
+    android:viewportWidth="320"
+    android:viewportHeight="180">
+    <!-- Deep space background -->
+    <path
+        android:fillColor="#0B0E14"
+        android:pathData="M0,0h320v180h-320z"/>
+    <!-- Nebula accent glow -->
+    <path
+        android:fillColor="#1565C0"
+        android:pathData="M160,90m-80,0a80,80 0 1,1 160,0a80,80 0 1,1 -160,0"/>
+    <!-- Ring / Orbit -->
+    <path
+        android:strokeColor="#64B5F6"
+        android:strokeWidth="2"
+        android:pathData="M80,120 Q160,30 240,120 Q160,160 80,120"/>
+    <!-- Planet / Core -->
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M160,90m-24,0a24,24 0 1,1 48,0a24,24 0 1,1 -48,0"/>
+</vector>
+
