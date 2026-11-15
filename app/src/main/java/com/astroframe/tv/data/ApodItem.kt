@@ -7,7 +7,9 @@ data class ApodItem(
     val mediaType: String,
     val url: String,
     val hdUrl: String?,
-    val copyright: String? = null
+    val copyright: String? = null,
+    val sourceBadge: String = "✦ NASA APOD",
+    val sourceColor: String = "#64B5F6"
 ) {
     val bestImageUrl: String
         get() = hdUrl?.takeIf { it.isNotBlank() } ?: url

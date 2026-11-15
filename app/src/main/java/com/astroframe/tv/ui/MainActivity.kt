@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.astroframe.tv.R
+import com.astroframe.tv.data.ArtSource
 import com.astroframe.tv.data.OverlayPosition
 import com.astroframe.tv.data.PreferencesManager
 import com.astroframe.tv.databinding.ActivityMainBinding
@@ -43,41 +44,35 @@ class MainActivity : AppCompatActivity() {
         // 1. Refresh Now
         binding.btnRefreshNow.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            binding.tvStatus.text = "Fetching new wallpaper from NASA..."
+            binding.tvStatus.text = "Fetching new wallpaper from ${prefs.artSource.label}..."
             binding.btnRefreshNow.isEnabled = false
             ApodWallpaperWorker.triggerImmediate(this)
         }
 
-        // 2. Overlay Position Toggle
+        // 2. Overlay Position Dialog
         binding.btnOverlayPos.setOnClickListener {
-            val nextPos = prefs.overlayPosition.next()
-            prefs.overlayPosition = nextPos
-            updateOverlayButtonText()
-            Toast.makeText(this, "Overlay set to ${nextPos.label}", Toast.LENGTH_SHORT).show()
+            showOverlayPositionDialog()
         }
 
-        // 3. Interval Toggle
+        // 3. Collection / Art Source Dialog (NASA, The Met, Mixed)
+        binding.btnArtSource.setOnClickListener {
+            showArtSourceDialog()
+        }
+
+        // 4. Interval Dialog (Quick direct selection)
         binding.btnInterval.setOnClickListener {
-            val options = PreferencesManager.INTERVAL_OPTIONS
-            val currentIndex = options.indexOf(prefs.intervalMinutes)
-            val nextIndex = if (currentIndex != -1) (currentIndex + 1) % options.size else 1
-            val nextMinutes = options[nextIndex]
-
-            prefs.intervalMinutes = nextMinutes
-            ApodWallpaperWorker.schedulePeriodic(this, nextMinutes, forceReplace = true)
-            updateIntervalButtonText()
-            Toast.makeText(this, "Periodic interval set to ${formatMinutes(nextMinutes)}", Toast.LENGTH_SHORT).show()
+            showIntervalDialog()
         }
 
-        // 4. Photo Mode Toggle
+        // 5. Photo Mode Toggle (Random Archive vs Latest)
         binding.btnMode.setOnClickListener {
             prefs.useRandom = !prefs.useRandom
             updateModeButtonText()
-            val modeName = if (prefs.useRandom) "Random Archive" else "Today's APOD"
-            Toast.makeText(this, "Source set to $modeName", Toast.LENGTH_SHORT).show()
+            val modeName = if (prefs.useRandom) "Random Archive" else "Latest Daily"
+            Toast.makeText(this, "Mode set to $modeName", Toast.LENGTH_SHORT).show()
         }
 
-        // 5. Setup Guide Dialog
+        // 6. Setup Guide Dialog
         binding.btnSetupGuide.setOnClickListener {
             showProjectivyGuideDialog()
         }
@@ -104,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                     WorkInfo.State.FAILED -> {
                         binding.progressBar.visibility = View.GONE
                         binding.btnRefreshNow.isEnabled = true
-                        binding.tvStatus.text = "Status: Failed to fetch image. Check internet or API key."
+                        binding.tvStatus.text = "Status: Failed to fetch image. Check internet connection."
                         Toast.makeText(this, "Failed to download wallpaper", Toast.LENGTH_SHORT).show()
                     }
                     else -> Unit
@@ -114,6 +109,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshUiState() {
         updateOverlayButtonText()
+        updateArtSourceButtonText()
         updateIntervalButtonText()
         updateModeButtonText()
 
@@ -131,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
         if (prefs.lastTitle.isNotBlank()) {
             binding.tvCurrentTitle.text = prefs.lastTitle
-            binding.tvCurrentDateCredit.text = "${prefs.lastDate} • NASA APOD"
+            binding.tvCurrentDateCredit.text = "${prefs.lastDate} • ${prefs.artSource.badge}"
             binding.tvCurrentExplanation.text = prefs.lastExplanation
 
             val dateStr = if (prefs.lastUpdatedMs > 0) {
@@ -145,12 +141,16 @@ class MainActivity : AppCompatActivity() {
         binding.btnOverlayPos.text = "Overlay: ${prefs.overlayPosition.label}"
     }
 
+    private fun updateArtSourceButtonText() {
+        binding.btnArtSource.text = "Collection: ${prefs.artSource.label}"
+    }
+
     private fun updateIntervalButtonText() {
         binding.btnInterval.text = "Interval: ${formatMinutes(prefs.intervalMinutes)}"
     }
 
     private fun updateModeButtonText() {
-        val label = if (prefs.useRandom) "Random Archive" else "Today's APOD"
+        val label = if (prefs.useRandom) "Random Archive" else "Latest Daily"
         binding.btnMode.text = "Mode: $label"
     }
 
@@ -161,6 +161,65 @@ class MainActivity : AppCompatActivity() {
             minutes == 1440 -> "24 Hours (Daily)"
             else -> "${minutes / 60} Hours"
         }
+    }
+
+    private fun showIntervalDialog() {
+        val options = PreferencesManager.INTERVAL_OPTIONS
+        val labels = options.map { formatMinutes(it) }.toTypedArray()
+        val currentIndex = options.indexOf(prefs.intervalMinutes).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Wallpaper Update Interval")
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                val selectedMinutes = options[which]
+                prefs.intervalMinutes = selectedMinutes
+                ApodWallpaperWorker.schedulePeriodic(this, selectedMinutes, forceReplace = true)
+                updateIntervalButtonText()
+                Toast.makeText(this, "Interval set to ${labels[which]}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showArtSourceDialog() {
+        val sources = ArtSource.entries.toTypedArray()
+        val labels = arrayOf(
+            "🚀 NASA Cosmos (Astronomy Picture of the Day)",
+            "🎨 The Met Museum (Famous Masterpieces & Fine Art)",
+            "🌌 Cosmos + Museum Mix (Random Shuffle)"
+        )
+        val currentIndex = sources.indexOf(prefs.artSource).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Artwork Collection")
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                val selectedSource = sources[which]
+                prefs.artSource = selectedSource
+                updateArtSourceButtonText()
+                Toast.makeText(this, "Collection set to ${selectedSource.label}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showOverlayPositionDialog() {
+        val positions = OverlayPosition.entries.toTypedArray()
+        val labels = positions.map { it.label }.toTypedArray()
+        val currentIndex = positions.indexOf(prefs.overlayPosition).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle("Select Overlay Position on TV")
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                val selectedPos = positions[which]
+                prefs.overlayPosition = selectedPos
+                updateOverlayButtonText()
+                Toast.makeText(this, "Overlay set to ${selectedPos.label}", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun showProjectivyGuideDialog() {
@@ -176,4 +235,3 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 }
-

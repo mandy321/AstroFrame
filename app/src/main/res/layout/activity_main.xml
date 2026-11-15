@@ -155,7 +155,20 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Interval Toggle -->
+            <!-- Collection Source Selection -->
+            <Button
+                android:id="@+id/btnArtSource"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Collection: NASA Cosmos"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_blue"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Interval Selection (Opens Quick Picker) -->
             <Button
                 android:id="@+id/btnInterval"
                 android:layout_width="match_parent"

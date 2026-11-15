@@ -119,9 +119,9 @@ class ImageProcessor(private val context: Context) {
         apod: ApodItem,
         position: OverlayPosition
     ) {
-        val cardWidth = 660f
-        val cardHeight = 220f
-        val margin = 50f
+        val cardWidth = 760f
+        val cardHeight = 250f
+        val margin = 60f
 
         val left: Float
         val top: Float
@@ -152,38 +152,42 @@ class ImageProcessor(private val context: Context) {
         // Background rounded translucent card with subtle border
         val cardRect = RectF(left, top, right, bottom)
         val cardPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(165, 10, 14, 24)
+            color = Color.argb(175, 10, 14, 24)
             style = Paint.Style.FILL
         }
         val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(70, 255, 255, 255)
+            color = Color.argb(75, 255, 255, 255)
             style = Paint.Style.STROKE
             strokeWidth = 1.5f
         }
 
-        canvas.drawRoundRect(cardRect, 20f, 20f, cardPaint)
-        canvas.drawRoundRect(cardRect, 20f, 20f, borderPaint)
+        canvas.drawRoundRect(cardRect, 22f, 22f, cardPaint)
+        canvas.drawRoundRect(cardRect, 22f, 22f, borderPaint)
 
-        var currentY = top + 34f
-        val textLeft = left + 28f
-        val contentWidth = (cardWidth - 56f).toInt()
+        var currentY = top + 36f
+        val textLeft = left + 32f
+        val contentWidth = (cardWidth - 64f).toInt()
 
-        // 1. Tag / Badge (NASA APOD • Date)
+        // 1. Tag / Badge (NASA APOD or The Met • Date)
         val tagPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#64B5F6") // Soft cyan/blue
-            textSize = 19f
+            color = try {
+                Color.parseColor(apod.sourceColor)
+            } catch (e: Exception) {
+                Color.parseColor("#64B5F6")
+            }
+            textSize = 21f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         }
-        val tagText = "✦ NASA APOD  •  ${apod.date}"
+        val tagText = "${apod.sourceBadge}  •  ${apod.date}"
         canvas.drawText(tagText, textLeft, currentY, tagPaint)
-        currentY += 28f
+        currentY += 32f
 
-        // 2. Title
+        // 2. Title (Bold 33sp for enhanced 10-foot legibility)
         val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
-            textSize = 26f
+            textSize = 33f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            setShadowLayer(4f, 1f, 1f, Color.argb(180, 0, 0, 0))
+            setShadowLayer(5f, 2f, 2f, Color.argb(220, 0, 0, 0))
         }
         val titleLayout = StaticLayout.Builder.obtain(
             apod.title,
@@ -203,10 +207,10 @@ class ImageProcessor(private val context: Context) {
         canvas.restore()
         currentY += titleLayout.height + 12f
 
-        // 3. Explanation summary
+        // 3. Explanation summary (21sp)
         val descPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#E0E0E0")
-            textSize = 18f
+            color = Color.parseColor("#E4E7EB")
+            textSize = 21f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
             setShadowLayer(3f, 1f, 1f, Color.argb(180, 0, 0, 0))
         }
@@ -229,11 +233,11 @@ class ImageProcessor(private val context: Context) {
         canvas.restore()
         currentY += descLayout.height + 14f
 
-        // 4. Credit / Copyright (if available)
+        // 4. Credit / Copyright (17sp)
         if (!apod.copyright.isNullOrBlank()) {
             val creditPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
                 color = Color.parseColor("#B0BEC5")
-                textSize = 15f
+                textSize = 17f
                 typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
             }
             val cleanCredit = apod.copyright.replace("\n", " ").trim()

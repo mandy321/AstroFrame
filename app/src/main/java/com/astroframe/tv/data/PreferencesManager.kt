@@ -32,6 +32,7 @@ class PreferencesManager(context: Context) {
         private const val KEY_LAST_EXPLANATION = "last_explanation"
         private const val KEY_LAST_UPDATED_MS = "last_updated_ms"
         private const val KEY_LAST_IMAGE_PATH = "last_image_path"
+        private const val KEY_ART_SOURCE = "art_source"
 
         val INTERVAL_OPTIONS = listOf(15, 30, 60, 180, 360, 1440)
     }
@@ -78,4 +79,15 @@ class PreferencesManager(context: Context) {
     var lastImagePath: String
         get() = prefs.getString(KEY_LAST_IMAGE_PATH, "") ?: ""
         set(value) = prefs.edit().putString(KEY_LAST_IMAGE_PATH, value).apply()
+
+    var artSource: ArtSource
+        get() {
+            val name = prefs.getString(KEY_ART_SOURCE, ArtSource.NASA_APOD.name)
+            return try {
+                ArtSource.valueOf(name ?: ArtSource.NASA_APOD.name)
+            } catch (e: Exception) {
+                ArtSource.NASA_APOD
+            }
+        }
+        set(value) = prefs.edit().putString(KEY_ART_SOURCE, value.name).apply()
 }

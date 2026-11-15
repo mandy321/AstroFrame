@@ -77,13 +77,29 @@ class ApodWallpaperWorker(
         val prefs = PreferencesManager(context)
         val apiKey = prefs.apiKey.ifBlank { com.astroframe.tv.BuildConfig.NASA_API_KEY }
         val apiClient = ApodApiClient()
+        val metClient = com.astroframe.tv.data.MetApiClient()
         val imageProcessor = ImageProcessor(context)
 
-        Log.d(TAG, "Executing APOD wallpaper worker update...")
+        Log.d(TAG, "Executing wallpaper update for source: ${prefs.artSource}...")
 
-        val apod = apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+        val apod = when (prefs.artSource) {
+            com.astroframe.tv.data.ArtSource.NASA_APOD -> {
+                apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+            }
+            com.astroframe.tv.data.ArtSource.THE_MET -> {
+                metClient.fetchMasterpiece() ?: apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+            }
+            com.astroframe.tv.data.ArtSource.MIXED -> {
+                if (kotlin.random.Random.nextBoolean()) {
+                    metClient.fetchMasterpiece() ?: apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+                } else {
+                    apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom) ?: metClient.fetchMasterpiece()
+                }
+            }
+        }
+
         if (apod == null) {
-            Log.e(TAG, "Failed to retrieve APOD entry from NASA API")
+            Log.e(TAG, "Failed to retrieve artwork or astronomy photo")
             return@withContext Result.retry()
         }
 

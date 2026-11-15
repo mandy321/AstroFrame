@@ -1,21 +1,19 @@
 # 🌌 AstroFrame (Android TV)
 
-Automated **NASA Astronomy Picture of the Day (APOD)** 4K wallpaper updater with embedded educational context for **Android TV** and **Projectivy Launcher**.
+Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater with embedded educational context for **Android TV** and **Projectivy Launcher**.
 
 ---
 
 ## ✨ Features
 
-* **Automatic 30-Minute Rotation**: Uses Android's robust `WorkManager` background engine to fetch random historic discoveries from NASA's 25+ year archive or today's photo.
-* **Readable On-Screen Context**: Generates a sleek, cinematic overlay card directly onto the 1080p/4K canvas with:
-  * Official discovery date & NASA APOD badge
-  * Artwork/Photo title in bold high-contrast TV typography
-  * 2-sentence bite-sized explanation
-  * Astrophotographer / Telescope credit (NASA, ESA, James Webb, Hubble, etc.)
-* **Projectivy Launcher Native Integration**: Seamlessly saves wallpapers to `/sdcard/Pictures/AstroFrame/`, which Projectivy can cycle as a local slideshow or single dynamic wallpaper.
-* **Zero TV UI Lag**: All image processing and text rendering is baked into the image on a background thread. No floating windows or battery drain.
-* **10-Foot Remote UI**: Full Android TV interface with D-pad navigation to trigger instant updates, adjust rotation intervals, and reposition the info card.
-* **Survives Reboots**: Re-registers automatically on TV boot via `BOOT_COMPLETED`.
+* **Dual Art Collections**:
+  * 🚀 **NASA Cosmos (APOD)**: Daily and historic 4K astronomical discoveries from NASA.
+  * 🎨 **The Met Museum**: High-resolution public domain masterpieces (Van Gogh, Monet, Rembrandt, Vermeer, Hokusai, Cézanne).
+  * 🌌 **Shuffle / Mix**: Alternates between deep space discoveries and world-class fine art.
+* **Large 10-Foot TV Typography**: Bold 33sp headline, 21sp readable summary, and source badges (NASA Cyan / Museum Gold) legible from across the room.
+* **Easy Remote Dialog Pickers**: Quickly select intervals (15m, 30m, 1h, 3h, 6h, 24h) and art sources via native D-pad choice dialogs.
+* **Automatic Storage Cleanup**: Auto-deletes wallpapers older than 48 hours and caps storage at max 10 images (under 25MB total).
+* **Projectivy Launcher Native Integration**: Seamlessly saves wallpapers to `/sdcard/Pictures/AstroFrame/`.
 
 ---
 
