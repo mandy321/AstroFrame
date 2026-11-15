@@ -73,16 +73,18 @@ class ImageProcessor(private val context: Context) {
 
     private fun downloadBitmap(url: String): Bitmap? {
         return try {
-            val request = Request.Builder().url(url).build()
+            val request = Request.Builder()
+                .url(url)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+                .build()
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) return null
-                val stream: InputStream = response.body?.byteStream() ?: return null
+                val bytes = response.body?.bytes() ?: return null
 
-                // Decode bounds first to prevent OOM
                 val options = BitmapFactory.Options().apply {
                     inPreferredConfig = Bitmap.Config.RGB_565
                 }
-                BitmapFactory.decodeStream(stream, null, options)
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error downloading bitmap", e)
