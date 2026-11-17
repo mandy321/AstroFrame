@@ -1,6 +1,9 @@
 package com.astroframe.tv.screensaver
 
-import android.animation.TimeInterpolator
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,25 +13,29 @@ import android.os.Handler
 import android.os.Looper
 import android.service.dreams.DreamService
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import com.astroframe.tv.R
-import com.astroframe.tv.data.MatStyle
 import com.astroframe.tv.data.PreferencesManager
 import com.astroframe.tv.ui.MuseumFrameView
 import com.astroframe.tv.worker.ApodWallpaperWorker
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.random.Random
 
 class AstroDreamService : DreamService() {
 
     companion object {
         private const val TAG = "AstroDreamService"
-        private const val CROSSFADE_DURATION_MS = 1500L
-        private const val OLED_DRIFT_INTERVAL_MS = 90_000L // Micro-shift canvas every 90s to prevent burn-in
-        private const val TELEMETRY_AUTO_HIDE_MS = 8000L
+        private const val CROSSFADE_DURATION_MS = 1400L
+        private const val OLED_DRIFT_INTERVAL_MS = 90_000L
+        private const val TELEMETRY_AUTO_HIDE_MS = 7000L
+        private const val KEN_BURNS_SCALE_FACTOR = 1.065f
     }
 
     private lateinit var prefs: PreferencesManager
@@ -36,10 +43,23 @@ class AstroDreamService : DreamService() {
     private lateinit var artCanvasContainer: View
     private lateinit var imgFront: ImageView
     private lateinit var imgBack: ImageView
+
+    // Top Bar (Clock & Weather)
+    private lateinit var topBarPill: View
+    private lateinit var txtClock: TextView
+    private lateinit var txtWeatherBadge: TextView
+
+    // AuraMusic Island
+    private lateinit var auraMusicPill: View
+    private lateinit var txtMusicTrack: TextView
+    private lateinit var txtMusicArtist: TextView
+
+    // Bottom Telemetry & D-Pad Hints
     private lateinit var telemetryPill: View
     private lateinit var txtArtworkTitle: TextView
     private lateinit var txtArtworkSubtitle: TextView
     private lateinit var txtTelemetryBadge: TextView
+    private lateinit var txtRemoteHint: TextView
 
     private val handler = Looper.myLooper()?.let { Handler(it) } ?: Handler(Looper.getMainLooper())
     private var imageFiles: List<File> = emptyList()
@@ -48,13 +68,38 @@ class AstroDreamService : DreamService() {
     private var nextBitmap: Bitmap? = null
     private var sessionStartTimeMs: Long = 0L
 
-    // OLED Care Organic Drift State
+    // Playback State
+    private var isPaused = false
+
+    // OLED Drift State
     private var currentDriftX = 0f
     private var currentDriftY = 0f
 
+    // AuraMusic Broadcast Receiver
+    private val auraMusicReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null) return
+            val action = intent.action
+            if (action == "com.music.auramusic.METADATA_CHANGED" || action == "com.android.music.metachanged") {
+                val track = intent.getStringExtra("track") ?: intent.getStringExtra("title")
+                val artist = intent.getStringExtra("artist")
+                if (!track.isNullOrBlank()) {
+                    txtMusicTrack.text = track
+                    txtMusicArtist.text = artist ?: "AuraMusic Lossless Stream"
+                    auraMusicPill.visibility = View.VISIBLE
+                    auraMusicPill.alpha = 1f
+                }
+            } else if (action == "com.music.auramusic.PLAYBACK_STOPPED") {
+                auraMusicPill.visibility = View.GONE
+            }
+        }
+    }
+
     private val rotationRunnable = object : Runnable {
         override fun run() {
-            showNextImage()
+            if (!isPaused) {
+                showNextImage()
+            }
             val rotationSec = prefs.screensaverRotationSeconds
             if (rotationSec > 0) {
                 handler.postDelayed(this, rotationSec * 1000L)
@@ -62,7 +107,6 @@ class AstroDreamService : DreamService() {
         }
     }
 
-    // OLED Care Micro-drift: shifts canvas by -3 to +3 pixels imperceptibly
     private val oledCareRunnable = object : Runnable {
         override fun run() {
             if (prefs.oledCareEnabled) {
@@ -72,26 +116,33 @@ class AstroDreamService : DreamService() {
         }
     }
 
+    private val clockRunnable = object : Runnable {
+        override fun run() {
+            updateClock()
+            handler.postDelayed(this, 30_000L)
+        }
+    }
+
     private val hideTelemetryRunnable = Runnable {
         telemetryPill.animate()
             .alpha(0f)
-            .translationY(30f)
-            .setDuration(800L)
+            .translationY(35f)
+            .setDuration(700L)
             .start()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         isFullscreen = true
-        isInteractive = false // Any remote interaction wakes the display
+        // Set interactive so TV remote D-Pad events (Left, Right, OK, Play/Pause) are received by AstroDreamService
+        isInteractive = true
 
-        // Enable 10-bit Wide Color Gamut (Display P3 / BT.2020) on supported Android TV hardware
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 window?.colorMode = ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT
                 Log.d(TAG, "Hardware Wide Color Gamut enabled on display window")
             } catch (e: Exception) {
-                Log.w(TAG, "Wide color gamut not supported on this TV: ${e.message}")
+                Log.w(TAG, "Wide color gamut not supported: ${e.message}")
             }
         }
 
@@ -100,15 +151,35 @@ class AstroDreamService : DreamService() {
         artCanvasContainer = findViewById(R.id.artCanvasContainer)
         imgFront = findViewById(R.id.imgScreensaverFront)
         imgBack = findViewById(R.id.imgScreensaverBack)
+
+        topBarPill = findViewById(R.id.topBarPill)
+        txtClock = findViewById(R.id.txtClock)
+        txtWeatherBadge = findViewById(R.id.txtWeatherBadge)
+
+        auraMusicPill = findViewById(R.id.auraMusicPill)
+        txtMusicTrack = findViewById(R.id.txtMusicTrack)
+        txtMusicArtist = findViewById(R.id.txtMusicArtist)
+
         telemetryPill = findViewById(R.id.telemetryPill)
         txtArtworkTitle = findViewById(R.id.txtArtworkTitle)
         txtArtworkSubtitle = findViewById(R.id.txtArtworkSubtitle)
         txtTelemetryBadge = findViewById(R.id.txtTelemetryBadge)
+        txtRemoteHint = findViewById(R.id.txtRemoteHint)
 
         prefs = PreferencesManager(this)
-
-        // Apply museum framing preference
         museumFrameContainer.setMatStyle(prefs.matStyle)
+
+        // Register AuraMusic synergy receiver
+        val filter = IntentFilter().apply {
+            addAction("com.music.auramusic.METADATA_CHANGED")
+            addAction("com.music.auramusic.PLAYBACK_STOPPED")
+            addAction("com.android.music.metachanged")
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(auraMusicReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(auraMusicReceiver, filter)
+        }
     }
 
     override fun onDreamingStarted() {
@@ -119,8 +190,9 @@ class AstroDreamService : DreamService() {
         com.astroframe.tv.analytics.AnalyticsTracker.trackScreensaverStarted(prefs.screensaverRotationSeconds)
 
         reloadFiles()
+        updateClock()
+        handler.post(clockRunnable)
 
-        // Start OLED care burn-in prevention loop
         if (prefs.oledCareEnabled) {
             handler.postDelayed(oledCareRunnable, OLED_DRIFT_INTERVAL_MS)
         }
@@ -156,6 +228,48 @@ class AstroDreamService : DreamService() {
         super.onDetachedFromWindow()
         stopSlideshow()
         recycleBitmaps()
+        try {
+            unregisterReceiver(auraMusicReceiver)
+        } catch (_: Exception) {}
+    }
+
+    /**
+     * TV Remote D-Pad Navigation & Interactivity:
+     * - Left: Previous artwork
+     * - Right: Next artwork
+     * - Center / OK: Toggle info pill
+     * - Play/Pause / Down: Toggle Pause/Resume
+     * - Back / Home: Wake TV
+     */
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        if (event.action == KeyEvent.ACTION_DOWN) {
+            when (event.keyCode) {
+                KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_MEDIA_NEXT -> {
+                    showNextImage()
+                    revealTelemetry()
+                    return true
+                }
+                KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
+                    showPreviousImage()
+                    revealTelemetry()
+                    return true
+                }
+                KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_INFO -> {
+                    toggleTelemetry()
+                    return true
+                }
+                KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE, KeyEvent.KEYCODE_MEDIA_PAUSE, KeyEvent.KEYCODE_MEDIA_PLAY, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                    togglePause()
+                    revealTelemetry()
+                    return true
+                }
+                KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
+                    finish() // Exit screensaver
+                    return true
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event)
     }
 
     private fun reloadFiles() {
@@ -186,6 +300,7 @@ class AstroDreamService : DreamService() {
         imgFront.alpha = 1f
         imgBack.visibility = View.GONE
 
+        startKenBurnsMotion(imgFront)
         updateTelemetryOverlay(firstFile)
 
         val rotationSec = prefs.screensaverRotationSeconds
@@ -196,18 +311,25 @@ class AstroDreamService : DreamService() {
 
     private fun showNextImage() {
         if (imageFiles.size <= 1) return
-
         currentIndex = (currentIndex + 1) % imageFiles.size
-        val nextFile = imageFiles[currentIndex]
-        val bmp = decodeImageFile(nextFile) ?: return
+        transitionToImage(imageFiles[currentIndex])
+    }
 
+    private fun showPreviousImage() {
+        if (imageFiles.size <= 1) return
+        currentIndex = if (currentIndex - 1 < 0) imageFiles.size - 1 else currentIndex - 1
+        transitionToImage(imageFiles[currentIndex])
+    }
+
+    private fun transitionToImage(file: File) {
+        val bmp = decodeImageFile(file) ?: return
         nextBitmap = bmp
         imgBack.setImageBitmap(bmp)
         imgBack.visibility = View.VISIBLE
 
-        updateTelemetryOverlay(nextFile)
+        updateTelemetryOverlay(file)
+        startKenBurnsMotion(imgBack)
 
-        // Apple-style fluid crossfade
         imgFront.animate()
             .alpha(0f)
             .setDuration(CROSSFADE_DURATION_MS)
@@ -215,6 +337,10 @@ class AstroDreamService : DreamService() {
             .withEndAction {
                 imgFront.setImageBitmap(bmp)
                 imgFront.alpha = 1f
+                imgFront.scaleX = imgBack.scaleX
+                imgFront.scaleY = imgBack.scaleY
+                imgFront.translationX = imgBack.translationX
+                imgFront.translationY = imgBack.translationY
                 imgBack.visibility = View.GONE
 
                 currentBitmap?.recycle()
@@ -222,6 +348,64 @@ class AstroDreamService : DreamService() {
                 nextBitmap = null
             }
             .start()
+    }
+
+    /**
+     * Cinematic 60 FPS Ken Burns Parallax:
+     * Slow, subtle zoom and pan across high-res deep-space photography.
+     */
+    private fun startKenBurnsMotion(view: ImageView) {
+        view.animate().cancel()
+        view.scaleX = 1.0f
+        view.scaleY = 1.0f
+        view.translationX = 0f
+        view.translationY = 0f
+
+        val targetScale = KEN_BURNS_SCALE_FACTOR
+        val targetTranslateX = (Random.nextFloat() * 24f) - 12f
+        val targetTranslateY = (Random.nextFloat() * 18f) - 9f
+
+        val duration = ((prefs.screensaverRotationSeconds.coerceAtLeast(30)) * 1000L) + 2000L
+
+        view.animate()
+            .scaleX(targetScale)
+            .scaleY(targetScale)
+            .translationX(targetTranslateX)
+            .translationY(targetTranslateY)
+            .setDuration(duration)
+            .setInterpolator(AccelerateDecelerateInterpolator())
+            .start()
+    }
+
+    private fun togglePause() {
+        isPaused = !isPaused
+        if (isPaused) {
+            txtRemoteHint.text = "⏸ Paused (Hold Artwork) • Press ▶ to Resume"
+        } else {
+            txtRemoteHint.text = "▶ Resumed  •  ◀ Previous  •  Next ▶"
+        }
+    }
+
+    private fun revealTelemetry() {
+        telemetryPill.animate().cancel()
+        telemetryPill.alpha = 1f
+        telemetryPill.translationY = 0f
+        handler.removeCallbacks(hideTelemetryRunnable)
+        handler.postDelayed(hideTelemetryRunnable, TELEMETRY_AUTO_HIDE_MS)
+    }
+
+    private fun toggleTelemetry() {
+        if (telemetryPill.alpha > 0.5f) {
+            handler.removeCallbacks(hideTelemetryRunnable)
+            telemetryPill.animate().alpha(0f).translationY(35f).setDuration(500L).start()
+        } else {
+            revealTelemetry()
+        }
+    }
+
+    private fun updateClock() {
+        val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
+        txtClock.text = sdf.format(Date())
     }
 
     private fun updateTelemetryOverlay(file: File) {
@@ -238,18 +422,9 @@ class AstroDreamService : DreamService() {
             "✦ 10-BIT HARDWARE DEPTH • THE FRAME MODE"
         }
 
-        // Show Apple TV glassmorphism telemetry pill, then gently slide down after 8s
-        telemetryPill.animate().cancel()
-        telemetryPill.alpha = 1f
-        telemetryPill.translationY = 0f
-        handler.removeCallbacks(hideTelemetryRunnable)
-        handler.postDelayed(hideTelemetryRunnable, TELEMETRY_AUTO_HIDE_MS)
+        revealTelemetry()
     }
 
-    /**
-     * Organic Pixel-Shift Engine:
-     * Displaces the canvas by +/- 3 pixels so static elements never cause image retention.
-     */
     private fun applyOledMicroDrift() {
         val deltaX = (Random.nextInt(7) - 3).toFloat()
         val deltaY = (Random.nextInt(7) - 3).toFloat()
@@ -276,6 +451,7 @@ class AstroDreamService : DreamService() {
     private fun stopSlideshow() {
         handler.removeCallbacks(rotationRunnable)
         handler.removeCallbacks(oledCareRunnable)
+        handler.removeCallbacks(clockRunnable)
         handler.removeCallbacks(hideTelemetryRunnable)
         handler.removeCallbacksAndMessages(null)
     }
@@ -291,10 +467,6 @@ class AstroDreamService : DreamService() {
         }
     }
 
-    /**
-     * High-Precision 10-bit / RGBA_F16 / ARGB_8888 Decoder:
-     * Prefers RGBA_F16 on Android 8.0+ for maximum gradient smoothness without banding.
-     */
     private fun decodeImageFile(file: File): Bitmap? {
         return try {
             val options = BitmapFactory.Options().apply {

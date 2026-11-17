@@ -358,21 +358,28 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun openSystemScreensaverSettings() {
-        try {
-            val intent = android.content.Intent("android.settings.DREAM_SETTINGS").apply {
-                flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            startActivity(intent)
-        } catch (e: Exception) {
+        private fun openSystemScreensaverSettings() {
+        val intents = listOf(
+            // 1. Android TV / Google TV Direct Daydream Chooser
+            android.content.Intent().setClassName("com.android.tv.settings", "com.android.tv.settings.device.display.daydream.DaydreamActivity"),
+            // 2. Google TV Settings Screensaver Deep Link
+            android.content.Intent("android.settings.DREAM_SETTINGS"),
+            // 3. Fallback Display Settings
+            android.content.Intent(android.provider.Settings.ACTION_DISPLAY_SETTINGS),
+            // 4. Fallback Main Settings
+            android.content.Intent(android.provider.Settings.ACTION_SETTINGS)
+        )
+
+        for (intent in intents) {
             try {
-                val fallbackIntent = android.content.Intent(android.provider.Settings.ACTION_SETTINGS).apply {
-                    flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                startActivity(fallbackIntent)
-            } catch (e2: Exception) {
-                Toast.makeText(this, "Open TV Settings > Device Preferences > Screensaver", Toast.LENGTH_LONG).show()
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                return
+            } catch (_: Exception) {
+                // Continue to next fallback
             }
         }
+        Toast.makeText(this, "Open TV Settings > System > Ambient Mode / Screensaver", Toast.LENGTH_LONG).show()
     }
+
 }
