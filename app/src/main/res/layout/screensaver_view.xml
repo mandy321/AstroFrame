@@ -1,24 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/screensaverRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <!-- Secondary image view for cross-fade transitions -->
-    <ImageView
-        android:id="@+id/imgScreensaverBack"
+    <!-- Museum Framing Layer -->
+    <com.astroframe.tv.ui.MuseumFrameView
+        android:id="@+id/museumFrameContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:contentDescription="Screensaver Image" />
+        android:background="@android:color/black">
 
-    <!-- Primary image view on top -->
-    <ImageView
-        android:id="@+id/imgScreensaverFront"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:contentDescription="Screensaver Image" />
+        <FrameLayout
+            android:id="@+id/artCanvasContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imgScreensaverBack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Screensaver Image" />
+
+            <ImageView
+                android:id="@+id/imgScreensaverFront"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Screensaver Image" />
+
+        </FrameLayout>
+
+    </com.astroframe.tv.ui.MuseumFrameView>
+
+    <!-- Apple tvOS-style Floating Frosted Glass Telemetry Chip -->
+    <LinearLayout
+        android:id="@+id/telemetryPill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="36dp"
+        android:background="@drawable/bg_apple_frosted_glass"
+        android:orientation="vertical"
+        android:paddingStart="22dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="14dp"
+        android:elevation="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/txtTelemetryBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="✦ 10-BIT WIDE GAMUT • OLED PROTECTED"
+                android:textColor="#A0B3D6"
+                android:textSize="11sp"
+                android:letterSpacing="0.08"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtArtworkTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="AstroFrame Deep Space"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:shadowColor="#80000000"
+            android:shadowRadius="4" />
+
+        <TextView
+            android:id="@+id/txtArtworkSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="sans-serif-light"
+            android:text="NASA / ESA Observatory"
+            android:textColor="#D0D6E0"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 
 </FrameLayout>
-

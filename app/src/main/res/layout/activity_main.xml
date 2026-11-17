@@ -207,6 +207,32 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
+                        <!-- Museum Frame Matting Style Button (The Frame Rival) -->
+            <Button
+                android:id="@+id/btnMatStyle"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Mat Frame: Full Screen"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_cyan"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- OLED Care & Pixel-Shift Toggle -->
+            <Button
+                android:id="@+id/btnOledCare"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="OLED Care: Active 🛡️"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_blue"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
             <!-- Screensaver Photo Rotation Button -->
             <Button
                 android:id="@+id/btnScreensaverRotation"

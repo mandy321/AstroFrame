@@ -4,6 +4,19 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.astroframe.tv.BuildConfig
 
+enum class MatStyle(val label: String, val paddingDp: Int) {
+    NONE("Bezel-to-Bezel (Full Screen)", 0),
+    SLIM_MODERN("Modern Slim Mat (24dp)", 24),
+    MUSEUM_CLASSIC("Museum Classic Bevel (48dp)", 48),
+    GALLERY_DEEP("Gallery Deep Shadowbox (72dp)", 72);
+
+    fun next(): MatStyle {
+        val values = entries.toTypedArray()
+        val nextIndex = (ordinal + 1) % values.size
+        return values[nextIndex]
+    }
+}
+
 enum class OverlayPosition(val label: String) {
     TOP_LEFT("Top Left"),
     TOP_RIGHT("Top Right"),
@@ -34,6 +47,9 @@ class PreferencesManager(context: Context) {
         private const val KEY_LAST_IMAGE_PATH = "last_image_path"
         private const val KEY_ART_SOURCE = "art_source"
         private const val KEY_SCREENSAVER_ROTATION = "screensaver_rotation_sec"
+        private const val KEY_OLED_CARE_ENABLED = "oled_care_enabled"
+        private const val KEY_MAT_STYLE = "mat_style"
+        private const val KEY_COLOR_GAMUT_10BIT = "color_gamut_10bit"
 
         val INTERVAL_OPTIONS = listOf(15, 30, 60, 180, 360, 1440)
         val SCREENSAVER_ROTATION_OPTIONS = listOf(0, 30, 60, 120, 300)
@@ -92,6 +108,25 @@ class PreferencesManager(context: Context) {
             }
         }
         set(value) = prefs.edit().putString(KEY_ART_SOURCE, value.name).apply()
+
+    var oledCareEnabled: Boolean
+        get() = prefs.getBoolean(KEY_OLED_CARE_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_OLED_CARE_ENABLED, value).apply()
+
+    var matStyle: MatStyle
+        get() {
+            val name = prefs.getString(KEY_MAT_STYLE, MatStyle.NONE.name)
+            return try {
+                MatStyle.valueOf(name ?: MatStyle.NONE.name)
+            } catch (e: Exception) {
+                MatStyle.NONE
+            }
+        }
+        set(value) = prefs.edit().putString(KEY_MAT_STYLE, value.name).apply()
+
+    var wideColorGamut10Bit: Boolean
+        get() = prefs.getBoolean(KEY_COLOR_GAMUT_10BIT, true)
+        set(value) = prefs.edit().putBoolean(KEY_COLOR_GAMUT_10BIT, value).apply()
 
     var screensaverRotationSeconds: Int
         get() = prefs.getInt(KEY_SCREENSAVER_ROTATION, 60)

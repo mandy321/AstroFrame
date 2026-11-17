@@ -11,6 +11,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.astroframe.tv.R
 import com.astroframe.tv.data.ArtSource
+import com.astroframe.tv.data.MatStyle
 import com.astroframe.tv.data.OverlayPosition
 import com.astroframe.tv.data.PreferencesManager
 import com.astroframe.tv.databinding.ActivityMainBinding
@@ -75,6 +76,19 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Mode set to $modeName", Toast.LENGTH_SHORT).show()
         }
 
+        // Museum Frame Matting Style Dialog
+        binding.btnMatStyle.setOnClickListener {
+            showMatStyleDialog()
+        }
+
+        // OLED Care Toggle
+        binding.btnOledCare.setOnClickListener {
+            prefs.oledCareEnabled = !prefs.oledCareEnabled
+            updateOledCareButtonText()
+            val state = if (prefs.oledCareEnabled) "Enabled (Anti-Burn-In Pixel Shift Active)" else "Disabled"
+            Toast.makeText(this, "OLED Care " + state, Toast.LENGTH_SHORT).show()
+        }
+
         // 6. NASA API Key Dialog
         binding.btnApiKey.setOnClickListener {
             showApiKeyDialog()
@@ -127,6 +141,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun refreshUiState() {
         updateOverlayButtonText()
+        updateMatStyleButtonText()
+        updateOledCareButtonText()
         updateArtSourceButtonText()
         updateIntervalButtonText()
         updateModeButtonText()
@@ -275,6 +291,33 @@ class MainActivity : AppCompatActivity() {
             .setNeutralButton("Reset Default") { _, _ ->
                 prefs.apiKey = com.astroframe.tv.BuildConfig.NASA_API_KEY
                 Toast.makeText(this, "Reset to default configuration", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun updateMatStyleButtonText() {
+        binding.btnMatStyle.text = "Mat Frame: " + prefs.matStyle.label
+    }
+
+    private fun updateOledCareButtonText() {
+        val label = if (prefs.oledCareEnabled) "OLED Care: Active 🛡️" else "OLED Care: Off"
+        binding.btnOledCare.text = label
+    }
+
+    private fun showMatStyleDialog() {
+        val styles = MatStyle.entries.toTypedArray()
+        val labels = styles.map { it.label }.toTypedArray()
+        val currentIndex = styles.indexOf(prefs.matStyle).coerceAtLeast(0)
+
+        AlertDialog.Builder(this)
+            .setTitle("Architectural Mat Framing (The Frame Mode)")
+            .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
+                val selectedStyle = styles[which]
+                prefs.matStyle = selectedStyle
+                updateMatStyleButtonText()
+                Toast.makeText(this, "Mat style: " + selectedStyle.label, Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
             }
             .setNegativeButton("Cancel", null)
             .show()
