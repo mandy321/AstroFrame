@@ -1,7 +1,7 @@
 # 🌌 AstroFrame (Android TV & Google TV)
 
 ### The Ultimate Ambient Art & Deep-Space Screensaver for Android TV, Google TV & Fire TV
-**Engineered with Apple tvOS Glassmorphism, 10-bit Deep Color, OLED Burn-In Care & Samsung "The Frame" Matting**
+**Engineered with Apple tvOS Glassmorphism, 10-bit Deep Color, OLED Burn-In Care & Samsung "The Frame" Architectural Matting**
 
 <p align="center">
   <a href="https://github.com/mandy321/AstroFrame/releases/latest"><img src="https://img.shields.io/github/v/release/mandy321/AstroFrame?style=for-the-badge&color=7C3AED&label=LATEST%20RELEASE" alt="Latest Release"></a>
@@ -24,12 +24,13 @@
 
 ## ⚡ What Makes AstroFrame the GOAT?
 
-While conventional video screensavers stream gigabytes of repetitive video, **AstroFrame** is purpose-built to transform modern living room displays into authentic living art pieces. 
+While conventional video screensavers stream gigabytes of repetitive video loops, **AstroFrame** transforms your living room display into an authentic living gallery, combining living science, world fine art, and custom personal photo albums.
 
 | Feature | AstroFrame | Conventional Screensavers (e.g. Aerial Views) |
 | :--- | :---: | :---: |
-| **Visual Library** | **Infinite Living Collections** (NASA APOD, JWST, Hubble, The Met Museum) | Static catalog of ~200 aerial clips |
-| **Bandwidth Consumption** | **Ultra-Low (<100MB/day)** with local 4K cache | Heavy (15–25 GB/day streaming 4K video) |
+| **Visual Library** | **5 Curated Living Collections** (NASA APOD, JWST, The Met, Rijksmuseum, Chicago, ISS & Custom) | Static catalog of ~200 aerial drone clips |
+| **Personal Photos / Custom Art** | **Built-in Personal TV Album (`/Pictures/AstroFrame_Custom/`)** | Requires external NAS / WebDAV / Immich setup |
+| **Bandwidth Consumption** | **Ultra-Low (<100MB/day)** with local 4K smart cache | Heavy (15–25 GB/day streaming 4K video) |
 | **Hardware Color Depth** | **10-bit Wide Color Gamut (`RGBA_F16`)** — Zero sky banding | 8-bit standard |
 | **Display Protection** | **Active OLED Care Engine** (Imperceptible micro-drift shifts) | Basic static overlay repositioning |
 | **Samsung "The Frame" Mode** | **Architectural Beveled Matting** with 45° inner shadowbox | Border-to-border only (looks like a TV, not a canvas) |
@@ -39,17 +40,72 @@ While conventional video screensavers stream gigabytes of repetitive video, **As
 
 ---
 
+## 🎨 Supported Artwork Collections
+
+AstroFrame lets you choose from 5 curated artwork streams or blend them together:
+
+### 1. 🚀 NASA Cosmos & Webb (`NASA_COSMOS`)
+* Deep-space nebulas, James Webb Space Telescope (JWST) infrared deep fields, and Hubble discoveries.
+* Direct uncompressed 4K imagery from the official NASA Open Platform with full astronomical explanations.
+
+### 2. 🎨 World Museum Masterpieces (`WORLD_MASTERPIECES`)
+* World-renowned fine art and oil paintings from **The Metropolitan Museum of Art (New York)**, the **Rijksmuseum (Amsterdam)**, and the **Art Institute of Chicago**.
+* Iconic masterworks by **Vincent van Gogh** (*Wheat Field with Cypresses*, *The Bedroom*), **Claude Monet** (*Water Lilies*), **Johannes Vermeer** (*The Milkmaid*), **Rembrandt** (*The Night Watch*), and **Katsushika Hokusai** (*The Great Wave*).
+
+### 3. 🌍 Earth from Orbit & ISS (`EARTH_ORBIT`)
+* Breathtaking 4K astronaut photography taken from the International Space Station cupola.
+* Vibrant auroral ribbons (Aurora Australis), illuminated nighttime city grids (Paris, Cairo, Nile Delta), and atmospheric sunburst horizons.
+
+### 4. 📁 Custom Personal Photos & Art (`CUSTOM_USER_FOLDER`)
+* Showcase your own family photo albums, wedding memories, custom digital art, or favorite 4K wallpapers.
+* Simply drop your `.jpg` or `.png` files into:
+  ```text
+  /sdcard/Pictures/AstroFrame_Custom/
+  ```
+* AstroFrame automatically detects and rotates your photos seamlessly in both screensaver and launcher modes.
+
+### 5. 🌌 The Ultimate Canvas (`ULTIMATE_MIX`)
+* An intelligent blend that alternates across space, museum paintings, orbital Earth photography, and your personal photo gallery.
+
+---
+
+## 📁 How to Add Your Own Photos & Wallpapers
+
+AstroFrame gives you total freedom to display your personal photos with zero paid subscriptions or complex servers required:
+
+```text
+Target Directory on TV:
+/sdcard/Pictures/AstroFrame_Custom/
+```
+
+### 4 Easy Ways to Beam Photos to your TV:
+1. **Send Files to TV (SFTTV) [Recommended]**:
+   - Install the free **"Send Files to TV"** app from the Google Play Store on your phone and TV.
+   - Select your favorite photos on your phone and send them to the TV's `/sdcard/Pictures/AstroFrame_Custom/` folder.
+2. **USB Flash Drive**:
+   - Copy your 4K pictures to a thumb drive.
+   - Plug it into your TV or NVIDIA Shield and use any free TV file manager (e.g. *X-plore* or *FX File Explorer*) to copy files into `/sdcard/Pictures/AstroFrame_Custom/`.
+3. **Local Wi-Fi Network / SMB**:
+   - If your TV is connected to your local network, transfer files over SMB or Windows Network Share directly from your PC or Mac.
+4. **Direct ADB Transfer (over Wi-Fi)**:
+   ```bash
+   adb connect <TV_IP_ADDRESS>:5555
+   adb push /path/to/my_photos/* /sdcard/Pictures/AstroFrame_Custom/
+   ```
+
+---
+
 ## 📸 Screenshots & Visual Preview
 
 <div align="center">
   <table style="border: none; width: 100%;">
     <tr>
       <td width="50%" align="center">
-        <b>🎨 The Met Museum (Fine Art with Museum Gold Badges)</b><br>
+        <b>🎨 The Met Museum & World Masterpieces</b><br>
         <a href="screenshots/preview_the_met.jpg"><img src="screenshots/preview_the_met.jpg" alt="The Met Museum Preview" width="100%"></a>
       </td>
       <td width="50%" align="center">
-        <b>🚀 NASA Cosmos (4K APOD with NASA Cyan Badges)</b><br>
+        <b>🚀 NASA Cosmos & Webb Deep Space</b><br>
         <a href="screenshots/preview_nasa_apod.jpg"><img src="screenshots/preview_nasa_apod.jpg" alt="NASA Cosmos Preview" width="100%"></a>
       </td>
     </tr>
@@ -67,7 +123,6 @@ While conventional video screensavers stream gigabytes of repetitive video, **As
 ## ✨ Flagship Capabilities
 
 ### 🎮 1. Interactive TV Remote D-Pad Navigation
-Never feel locked into a screensaver. Take complete control with your television remote:
 * **`D-Pad Right / Media Next`**: Instantly crossfade to the next artwork.
 * **`D-Pad Left / Media Previous`**: Return to the previous artwork.
 * **`Center OK / Info Button`**: Toggle the Apple tvOS-style translucent metadata card (artwork title, telescope details, and dates).
@@ -75,27 +130,24 @@ Never feel locked into a screensaver. Take complete control with your television
 * **`Back / Escape`**: Instantly wake the television.
 
 ### 🛡️ 2. Active OLED Care & Anti-Burn-In Drift
-Designed specifically for high-end **LG OLED**, **Sony Bravia QD-OLED**, and **Samsung OLED** displays:
-* An imperceptible background shifter gently translates the artwork canvas and floating HUD by `[-3..+3]px` every 90 seconds.
-* Subpixels never experience static retention, ensuring 100% burn-in safety during all-day ambient use.
+* Designed specifically for **LG OLED**, **Sony Bravia QD-OLED**, and **Samsung OLED** displays.
+* An imperceptible background shifter gently translates the artwork canvas and floating HUD by `[-3..+3]px` every 90 seconds. Subpixels never experience static retention.
 
 ### 🌈 3. 10-Bit Wide Color Gamut Deep Color Pipeline
-* Eliminates color stepping, posterization, and gradient banding across deep nebulae and solar coronas.
-* Harnesses `ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT` and renders in **`Bitmap.Config.RGBA_F16`** (16-bit half-float depth) on supported hardware like the **NVIDIA Shield TV Pro**, **Chromecast with Google TV**, and **Sony Bravia 4K**.
+* Eliminates color stepping, posterization, and gradient banding across deep space.
+* Renders in **`Bitmap.Config.RGBA_F16`** (16-bit half-float depth) with `ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT` on supported hardware.
 
-### 🖼️ 4. Architectural Museum Matting (Samsung "The Frame" Rival)
-Select from architectural mat styles to turn your flat screen into a genuine framed canvas:
+### 🖼️ 4. Architectural Museum Matting (Samsung "The Frame" Mode)
 * **Bezel-to-Bezel**: Edge-to-edge full screen photography.
 * **Modern Slim Mat (24dp)**: Clean modern border.
 * **Museum Classic Bevel (48dp)**: 45-degree architectural inner bevel shadow with archival warm gallery cream (`#F4EFE6`).
-* **Gallery Deep Shadowbox (72dp)**: Premium framed museum exhibition look.
+* **Gallery Deep Shadowbox (72dp)**: Premium framed exhibition look.
 
 ### 🎥 5. Cinematic 60 FPS "Ken Burns" Parallax
-* Smooth, meditative slow pan and scale (`1.065x`) rendered at 60 frames per second.
-* Deep space images feel dynamic and breathing without stuttering or video compression artifacts.
+* Smooth, meditative slow pan and scale (`1.065x`) rendered at 60 FPS without stuttering or video compression artifacts.
 
 ### 🎶 6. AuraMusic "Now Playing" Island Synergy
-* If you run [AuraMusic](https://github.com/mandy321/Auramusic-private), AstroFrame automatically displays an ambient frosted glass island in the top-left corner with track titles, artists, and bit-perfect audio badges.
+* Pairs with [AuraMusic](https://github.com/mandy321/Auramusic-private) to show an ambient frosted glass island in the top-left corner with track titles, artists, and bit-perfect audio badges.
 
 ---
 
@@ -115,45 +167,10 @@ adb install -r AstroFrame-v1.2.1.apk
 
 ## 📺 How to Set as Default TV Screensaver
 
-Since Android TV 12 and Google TV often hide third-party screensaver menus, AstroFrame includes an automated **Daydream Assistant**:
-
 1. Open **AstroFrame** on your television.
 2. Click **"Set as TV Screensaver 📺"**.
-3. AstroFrame immediately launches the hidden Google TV Daydream chooser.
+3. AstroFrame immediately launches the Google TV Daydream chooser.
 4. Select **"AstroFrame Screensaver"** and choose your preferred timeout (e.g. *5 minutes*).
-
-*(For Amazon Fire TV Stick, set AstroFrame via Projectivy Launcher's Idle Mode or use the standard 1-line ADB daydream command).*
-
----
-
-## 🛠️ How to Connect with Projectivy Launcher
-
-AstroFrame automatically generates and updates wallpapers in your TV's public media folder:
-```text
-/sdcard/Pictures/AstroFrame/
-```
-1. In **Projectivy Launcher**, navigate to **Settings $\rightarrow$ Appearance $\rightarrow$ Background $\rightarrow$ Source**.
-2. Select **Folder** and choose `/sdcard/Pictures/AstroFrame/`.
-3. Set transition to **Smooth Crossfade**.
-
----
-
-## ⚙️ Building from Source
-
-```bash
-# Clone repository
-git clone https://github.com/mandy321/AstroFrame.git
-cd AstroFrame
-
-# Build debug APK
-./gradlew assembleDebug
-```
-Output binary will be located at:
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
----
 
 ---
 
@@ -170,24 +187,33 @@ app/build/outputs/apk/debug/app-debug.apk
 </details>
 
 <details>
-<summary><b>2. Why was my screensaver showing a black screen when I picked "The Met Museum"?</b></summary>
+<summary><b>2. How do I add my own personal family photos or custom art?</b></summary>
 <br>
 
-When switching to **The Met Museum**, high-resolution 4K/8K uncompressed scans must first be downloaded to the TV storage. 
+Select **"📁 Custom Personal Photos & Art"** in the collection picker! Then copy any `.jpg` or `.png` files to:
+`/sdcard/Pictures/AstroFrame_Custom/`
+You can transfer them via USB flash drive, the free **Send Files to TV** app on Google Play, local network SMB share, or `adb push`. AstroFrame automatically detects and rotates your photos!
+</details>
+
+<details>
+<summary><b>3. Why was my screensaver showing a black screen when I picked "The Met Museum"?</b></summary>
+<br>
+
+When switching collections, high-resolution 4K/8K uncompressed scans must first be downloaded to the TV storage. 
 * In **v1.2.1**, if the screensaver started before that initial download finished, it would time out.
 * **Solution**: Simply open the app and tap **"Update Wallpaper Now"** once while on Museum mode. 
 * *Note: The latest code now automatically triggers an immediate background download upon selecting the collection and includes an active polling retry loop so the screen never stays black.*
 </details>
 
 <details>
-<summary><b>3. Is my TV at risk of OLED burn-in if I leave it on all day?</b></summary>
+<summary><b>4. Is my TV at risk of OLED burn-in if I leave it on all day?</b></summary>
 <br>
 
 **No.** AstroFrame is engineered specifically with an **Active OLED Care Engine**. Every 90 seconds, it applies an imperceptible micro-drift shift (`[-3..+3]px`) to the artwork canvas and floating HUD. Static subpixel retention is eliminated, making it 100% safe for LG OLED, Sony Bravia QD-OLED, and Samsung OLED screens.
 </details>
 
 <details>
-<summary><b>4. How do I control the screensaver with my TV remote?</b></summary>
+<summary><b>5. How do I control the screensaver with my TV remote?</b></summary>
 <br>
 
 AstroFrame features full Leanback D-pad remote interactivity:
@@ -199,11 +225,23 @@ AstroFrame features full Leanback D-pad remote interactivity:
 </details>
 
 <details>
-<summary><b>5. Does AstroFrame consume a lot of internet bandwidth like video screensavers?</b></summary>
+<summary><b>6. Does AstroFrame consume a lot of internet bandwidth like video screensavers?</b></summary>
 <br>
 
 **No.** Conventional video screensavers (like Apple TV aerial loops) stream 15–25 GB of 4K video per day. AstroFrame uses cached uncompressed 4K stills paired with a **60 FPS hardware Ken Burns motion engine**, consuming **less than 100 MB per day** while providing crystal-clear 10-bit color depth.
 </details>
 
+---
+
+## ⚙️ Building from Source
+
+```bash
+git clone https://github.com/mandy321/AstroFrame.git
+cd AstroFrame
+./gradlew assembleDebug
+```
+
+---
+
 ## 📄 License
-MIT License. Astronomy photos and explanations courtesy of the [NASA APOD API](https://api.nasa.gov/) and [The Metropolitan Museum of Art Open Access](https://www.metmuseum.org/).
+MIT License. Astronomy photos and explanations courtesy of the [NASA APOD API](https://api.nasa.gov/), [The Metropolitan Museum of Art Open Access](https://www.metmuseum.org/), [Rijksmuseum Amsterdam](https://data.rijksmuseum.nl/), and [The Art Institute of Chicago](https://www.artic.edu/).

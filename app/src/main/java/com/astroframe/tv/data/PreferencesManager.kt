@@ -100,11 +100,11 @@ class PreferencesManager(context: Context) {
 
     var artSource: ArtSource
         get() {
-            val name = prefs.getString(KEY_ART_SOURCE, ArtSource.NASA_APOD.name)
+            val name = prefs.getString(KEY_ART_SOURCE, ArtSource.NASA_COSMOS.name)
             return try {
-                ArtSource.valueOf(name ?: ArtSource.NASA_APOD.name)
+                ArtSource.valueOf(name ?: ArtSource.NASA_COSMOS.name)
             } catch (e: Exception) {
-                ArtSource.NASA_APOD
+                ArtSource.NASA_COSMOS
             }
         }
         set(value) = prefs.edit().putString(KEY_ART_SOURCE, value.name).apply()

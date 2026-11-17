@@ -217,29 +217,66 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun showArtSourceDialog() {
+        private fun showArtSourceDialog() {
         val sources = ArtSource.entries.toTypedArray()
-        val labels = arrayOf(
-            "🚀 NASA Cosmos (Astronomy Picture of the Day)",
-            "🎨 The Met Museum (Famous Masterpieces & Fine Art)",
-            "🌌 Cosmos + Museum Mix (Random Shuffle)"
-        )
+        val labels = sources.map { "${it.label}\n(${it.description})" }.toTypedArray()
         val currentIndex = sources.indexOf(prefs.artSource).coerceAtLeast(0)
 
         AlertDialog.Builder(this)
-            .setTitle("Select Artwork Collection")
+            .setTitle("Select Curated Artwork Collection")
             .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
                 val selectedSource = sources[which]
                 prefs.artSource = selectedSource
-                binding.progressBar.visibility = View.VISIBLE
-                binding.btnRefreshNow.isEnabled = false
-                binding.tvStatus.text = "Fetching initial artwork for " + selectedSource.label + "..."
-                ApodWallpaperWorker.triggerImmediate(this)
                 updateArtSourceButtonText()
-                Toast.makeText(this, "Collection set to ${selectedSource.label}", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
+
+                if (selectedSource == ArtSource.CUSTOM_USER_FOLDER) {
+                    dialog.dismiss()
+                    showCustomFolderInstructionsDialog()
+                } else {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.btnRefreshNow.isEnabled = false
+                    binding.tvStatus.text = "Loading initial artwork for " + selectedSource.label + "..."
+                    ApodWallpaperWorker.triggerImmediate(this)
+                    Toast.makeText(this, "Collection set to ${selectedSource.label}", Toast.LENGTH_SHORT).show()
+                    dialog.dismiss()
+                }
             }
             .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showCustomFolderInstructionsDialog() {
+        val customDir = com.astroframe.tv.data.CustomArtManager.getCustomArtDirectory()
+        val currentCount = com.astroframe.tv.data.CustomArtManager.getCustomPhotoCount()
+
+        val msg = """
+            📁 Custom Personal Art & Photos is now active!
+            
+            Current Photos Detected: $currentCount
+            
+            How to add your own photos & art:
+            1. Copy your JPG/PNG photos or 4K wallpaper files to:
+               ${customDir.absolutePath}
+            
+            Ways to copy files to your TV:
+            • USB Drive: Plug in a flash drive and copy files using any TV file manager.
+            • Send Files to TV (SFTTV): Free app on Google Play to beam photos from your phone.
+            • Local Network / SMB: Transfer via Wi-Fi from your PC or Mac.
+            • ADB Command:
+              adb push /path/to/photos/* ${customDir.absolutePath}/
+            
+            Once files are added, AstroFrame will seamlessly shuffle them on your TV screensaver and wallpaper!
+        """.trimIndent()
+
+        AlertDialog.Builder(this)
+            .setTitle("📁 How to Add Your Own Photos")
+            .setMessage(msg)
+            .setPositiveButton("Got It") { dialog, _ ->
+                binding.progressBar.visibility = View.VISIBLE
+                binding.btnRefreshNow.isEnabled = false
+                ApodWallpaperWorker.triggerImmediate(this)
+                dialog.dismiss()
+            }
             .show()
     }
 

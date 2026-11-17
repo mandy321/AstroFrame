@@ -3,12 +3,13 @@ package com.astroframe.tv.worker
 import android.content.Context
 import android.util.Log
 import androidx.work.*
-import com.astroframe.tv.data.ApodApiClient
-import com.astroframe.tv.data.PreferencesManager
+import com.astroframe.tv.data.*
 import com.astroframe.tv.graphics.ImageProcessor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class ApodWallpaperWorker(
     private val context: Context,
@@ -16,97 +17,117 @@ class ApodWallpaperWorker(
 ) : CoroutineWorker(context, workerParams) {
 
     companion object {
-        const val TAG = "ApodWallpaperWorker"
-        private const val UNIQUE_WORK_NAME = "astroframe_periodic_wallpaper"
-        private const val IMMEDIATE_WORK_NAME = "astroframe_immediate_wallpaper"
+        private const val TAG = "ApodWallpaperWorker"
+        const val WORK_NAME_PERIODIC = "AstroFrameWallpaperWorker"
+        const val WORK_NAME_IMMEDIATE = "AstroFrameImmediateWorker"
 
-        fun schedulePeriodic(
-            context: Context,
-            intervalMinutes: Int,
-            forceReplace: Boolean = false
-        ) {
+        fun schedulePeriodic(context: Context, intervalMinutes: Int, forceReplace: Boolean = false) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            // WorkManager requires minimum 15 minutes for periodic work
-            val clampedInterval = maxOf(intervalMinutes.toLong(), 15L)
-
-            val workRequest = PeriodicWorkRequestBuilder<ApodWallpaperWorker>(
-                clampedInterval,
-                TimeUnit.MINUTES
+            val periodicWork = PeriodicWorkRequestBuilder<ApodWallpaperWorker>(
+                intervalMinutes.toLong(), TimeUnit.MINUTES
             )
                 .setConstraints(constraints)
-                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 5, TimeUnit.MINUTES)
-                .addTag(TAG)
+                .addTag("PERIODIC")
                 .build()
 
-            val existingPolicy = if (forceReplace) {
+            val policy = if (forceReplace) {
                 ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE
             } else {
                 ExistingPeriodicWorkPolicy.KEEP
             }
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                UNIQUE_WORK_NAME,
-                existingPolicy,
-                workRequest
+                WORK_NAME_PERIODIC,
+                policy,
+                periodicWork
             )
-            Log.d(TAG, "Scheduled periodic APOD wallpaper update every $clampedInterval minutes")
+            Log.d(TAG, "Scheduled wallpaper rotation every $intervalMinutes mins")
         }
 
-        fun triggerImmediate(context: Context): Operation {
+        fun triggerImmediate(context: Context) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
 
-            val oneTimeRequest = OneTimeWorkRequestBuilder<ApodWallpaperWorker>()
+            val immediateWork = OneTimeWorkRequestBuilder<ApodWallpaperWorker>()
                 .setConstraints(constraints)
                 .addTag("IMMEDIATE")
                 .build()
 
-            return WorkManager.getInstance(context).enqueueUniqueWork(
-                IMMEDIATE_WORK_NAME,
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                WORK_NAME_IMMEDIATE,
                 ExistingWorkPolicy.REPLACE,
-                oneTimeRequest
+                immediateWork
             )
+            Log.d(TAG, "Triggered immediate wallpaper fetch")
         }
     }
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
         val prefs = PreferencesManager(context)
         val apiKey = prefs.apiKey.ifBlank { com.astroframe.tv.BuildConfig.NASA_API_KEY }
-        val apiClient = ApodApiClient()
-        val metClient = com.astroframe.tv.data.MetApiClient()
+        val apodClient = ApodApiClient()
+        val worldMuseumClient = WorldMuseumApiClient()
+        val earthOrbitClient = EarthOrbitApiClient()
         val imageProcessor = ImageProcessor(context)
 
         Log.d(TAG, "Executing wallpaper update for source: ${prefs.artSource}...")
 
-        val apod = when (prefs.artSource) {
-            com.astroframe.tv.data.ArtSource.NASA_APOD -> {
-                apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+        val apod: ApodItem? = when (prefs.artSource) {
+            ArtSource.NASA_COSMOS -> {
+                apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
             }
-            com.astroframe.tv.data.ArtSource.THE_MET -> {
-                metClient.fetchMasterpiece() ?: apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+
+            ArtSource.WORLD_MASTERPIECES -> {
+                worldMuseumClient.fetchMasterpiece() ?: apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
             }
-            com.astroframe.tv.data.ArtSource.MIXED -> {
-                if (kotlin.random.Random.nextBoolean()) {
-                    metClient.fetchMasterpiece() ?: apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
-                } else {
-                    apiClient.fetchApod(apiKey = apiKey, random = prefs.useRandom) ?: metClient.fetchMasterpiece()
+
+            ArtSource.EARTH_ORBIT -> {
+                earthOrbitClient.fetchEarthOrbitPhoto()
+            }
+
+            ArtSource.CUSTOM_USER_FOLDER -> {
+                CustomArtManager.fetchRandomCustomArtwork() ?: run {
+                    Log.w(TAG, "User folder empty, providing guide and fallback")
+                    worldMuseumClient.fetchMasterpiece() ?: apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+                }
+            }
+
+            ArtSource.ULTIMATE_MIX -> {
+                // Intelligent 4-way shuffle
+                val customCount = CustomArtManager.getCustomPhotoCount()
+                val roll = Random.nextInt(if (customCount > 0) 4 else 3)
+                when (roll) {
+                    0 -> apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+                    1 -> worldMuseumClient.fetchMasterpiece()
+                    2 -> earthOrbitClient.fetchEarthOrbitPhoto()
+                    else -> CustomArtManager.fetchRandomCustomArtwork() ?: worldMuseumClient.fetchMasterpiece()
                 }
             }
         }
 
         if (apod == null) {
-            Log.e(TAG, "Failed to retrieve artwork or astronomy photo")
+            Log.e(TAG, "Failed to retrieve artwork or photography item")
             return@withContext Result.retry()
         }
 
-        val savedFile = imageProcessor.processAndSaveWallpaper(
-            apod = apod,
-            position = prefs.overlayPosition
-        )
+        // If it's a local user photo, copy/process directly
+        val savedFile = if (apod.url.startsWith("/")) {
+            // Local file on storage
+            imageProcessor.processAndSaveLocalWallpaper(
+                localFilePath = apod.url,
+                apod = apod,
+                position = prefs.overlayPosition
+            )
+        } else {
+            imageProcessor.processAndSaveWallpaper(
+                apod = apod,
+                position = prefs.overlayPosition
+            )
+        }
 
         if (savedFile != null && savedFile.exists()) {
             prefs.lastTitle = apod.title
@@ -115,7 +136,6 @@ class ApodWallpaperWorker(
             prefs.lastUpdatedMs = System.currentTimeMillis()
             prefs.lastImagePath = savedFile.absolutePath
 
-            // Track live background wallpaper cycle
             com.astroframe.tv.analytics.AnalyticsTracker.trackWallpaperUpdated(
                 artSource = apod.sourceBadge,
                 title = apod.title,
@@ -130,4 +150,3 @@ class ApodWallpaperWorker(
         }
     }
 }
-

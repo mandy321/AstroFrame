@@ -31,6 +31,40 @@ class ImageProcessor(private val context: Context) {
 
     private val client = OkHttpClient()
 
+    suspend fun processAndSaveLocalWallpaper(
+        localFilePath: String,
+        apod: ApodItem,
+        position: OverlayPosition
+    ): File? = withContext(Dispatchers.IO) {
+        val rawBitmap = try {
+            val options = BitmapFactory.Options().apply {
+                inPreferredConfig = Bitmap.Config.RGB_565
+            }
+            BitmapFactory.decodeFile(localFilePath, options)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error decoding local photo: $localFilePath", e)
+            null
+        } ?: return@withContext null
+
+        val finalBitmap = Bitmap.createBitmap(CANVAS_WIDTH, CANVAS_HEIGHT, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(finalBitmap)
+
+        drawScaledCenterCrop(canvas, rawBitmap)
+        rawBitmap.recycle()
+
+        if (position != OverlayPosition.NONE) {
+            drawInfoOverlay(canvas, apod, position)
+        }
+
+        val savedFile = saveBitmapToStorage(finalBitmap, apod.date)
+        try {
+            WallpaperManager.getInstance(context).setBitmap(finalBitmap)
+        } catch (_: Exception) {}
+
+        finalBitmap.recycle()
+        savedFile
+    }
+
     suspend fun processAndSaveWallpaper(
         apod: ApodItem,
         position: OverlayPosition
