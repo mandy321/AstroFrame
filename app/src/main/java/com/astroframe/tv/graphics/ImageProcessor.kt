@@ -153,75 +153,65 @@ class ImageProcessor(private val context: Context) {
         apod: ApodItem,
         position: OverlayPosition
     ) {
-        val cardWidth = 760f
-        val cardHeight = 250f
-        val margin = 60f
+        if (position == OverlayPosition.NONE) return
+
+        // High-end Gallery Minimalist Floating Pill (Whisper-light 10% translucent glass)
+        val pillWidth = 580f
+        val pillHeight = 110f
+        val marginX = 54f
+        val marginY = 46f
 
         val left: Float
         val top: Float
 
         when (position) {
             OverlayPosition.TOP_LEFT -> {
-                left = margin
-                top = margin
+                left = marginX
+                top = marginY
             }
             OverlayPosition.TOP_RIGHT -> {
-                left = CANVAS_WIDTH - cardWidth - margin
-                top = margin
+                left = CANVAS_WIDTH - pillWidth - marginX
+                top = marginY
             }
             OverlayPosition.BOTTOM_LEFT -> {
-                left = margin
-                top = CANVAS_HEIGHT - cardHeight - margin
+                left = marginX
+                top = CANVAS_HEIGHT - pillHeight - marginY
             }
             OverlayPosition.BOTTOM_RIGHT -> {
-                left = CANVAS_WIDTH - cardWidth - margin
-                top = CANVAS_HEIGHT - cardHeight - margin
+                left = CANVAS_WIDTH - pillWidth - marginX
+                top = CANVAS_HEIGHT - pillHeight - marginY
             }
             OverlayPosition.NONE -> return
         }
 
-        val right = left + cardWidth
-        val bottom = top + cardHeight
+        val right = left + pillWidth
+        val bottom = top + pillHeight
 
-        // Background rounded translucent card with subtle border
-        val cardRect = RectF(left, top, right, bottom)
-        val cardPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(175, 10, 14, 24)
+        // Whisper-light 10% dark glass tint with delicate hairline border
+        val pillRect = RectF(left, top, right, bottom)
+        val pillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.argb(32, 0, 0, 0)
             style = Paint.Style.FILL
         }
         val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(75, 255, 255, 255)
+            color = Color.argb(40, 255, 255, 255)
             style = Paint.Style.STROKE
-            strokeWidth = 1.5f
+            strokeWidth = 1f
         }
 
-        canvas.drawRoundRect(cardRect, 22f, 22f, cardPaint)
-        canvas.drawRoundRect(cardRect, 22f, 22f, borderPaint)
+        canvas.drawRoundRect(pillRect, 22f, 22f, pillPaint)
+        canvas.drawRoundRect(pillRect, 22f, 22f, borderPaint)
 
-        var currentY = top + 36f
-        val textLeft = left + 32f
-        val contentWidth = (cardWidth - 64f).toInt()
+        val textLeft = left + 26f
+        val contentWidth = (pillWidth - 52f).toInt()
+        var currentY = top + 42f
 
-        // 1. Tag / Badge (NASA APOD or The Met • Date)
-        val tagPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = try {
-                Color.parseColor(apod.sourceColor)
-            } catch (e: Exception) {
-                Color.parseColor("#64B5F6")
-            }
-            textSize = 21f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-        }
-        val tagText = "${apod.sourceBadge}  •  ${apod.date}"
-        canvas.drawText(tagText, textLeft, currentY, tagPaint)
-        currentY += 32f
-
-        // 2. Title (Bold 33sp for enhanced 10-foot legibility)
+        // 1. Artwork Title (Clean, elegant 24sp white with drop shadow for 100% legibility)
         val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
-            textSize = 33f
+            textSize = 26f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            setShadowLayer(5f, 2f, 2f, Color.argb(220, 0, 0, 0))
+            setShadowLayer(4f, 1f, 1f, Color.argb(220, 0, 0, 0))
         }
         val titleLayout = StaticLayout.Builder.obtain(
             apod.title,
@@ -239,45 +229,17 @@ class ImageProcessor(private val context: Context) {
         canvas.translate(textLeft, currentY)
         titleLayout.draw(canvas)
         canvas.restore()
-        currentY += titleLayout.height + 12f
+        currentY += titleLayout.height + 6f
 
-        // 3. Explanation summary (21sp)
-        val descPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#E4E7EB")
-            textSize = 21f
+        // 2. Curated Subtitle (Date & Source Badge)
+        val subPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#CFD8DC")
+            textSize = 17f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
             setShadowLayer(3f, 1f, 1f, Color.argb(180, 0, 0, 0))
         }
-        val summary = apod.summaryExplanation
-        val descLayout = StaticLayout.Builder.obtain(
-            summary,
-            0,
-            summary.length,
-            descPaint,
-            contentWidth
-        )
-            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setMaxLines(2)
-            .setEllipsize(android.text.TextUtils.TruncateAt.END)
-            .build()
-
-        canvas.save()
-        canvas.translate(textLeft, currentY)
-        descLayout.draw(canvas)
-        canvas.restore()
-        currentY += descLayout.height + 14f
-
-        // 4. Credit / Copyright (17sp)
-        if (!apod.copyright.isNullOrBlank()) {
-            val creditPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = Color.parseColor("#B0BEC5")
-                textSize = 17f
-                typeface = Typeface.create(Typeface.DEFAULT, Typeface.ITALIC)
-            }
-            val cleanCredit = apod.copyright.replace("\n", " ").trim()
-            val creditText = "Credit: $cleanCredit"
-            canvas.drawText(creditText, textLeft, currentY, creditPaint)
-        }
+        val subText = "${apod.date}  •  ${apod.sourceBadge}"
+        canvas.drawText(subText, textLeft, currentY + 18f, subPaint)
     }
 
     private fun saveBitmapToStorage(bitmap: Bitmap, date: String): File? {

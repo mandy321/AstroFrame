@@ -12,8 +12,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.4.apk">
-    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.3.4-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.5.apk">
+    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.3.5-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
   </a>
   <a href="https://github.com/mandy321/AstroFrame/releases/latest">
     <img src="https://img.shields.io/badge/📦_ALL_RELEASES-GITHUB-blue?style=for-the-badge&logo=github&color=2563EB" alt="All Releases" height="40">
@@ -21,6 +21,16 @@
 </p>
 
 ---
+## 📺 Samsung The Frame Mode Preview
+
+<p align="center">
+  <img src="screenshots/the_frame_preview.jpg" alt="AstroFrame Samsung The Frame TV Mode" width="900" style="border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+</p>
+
+*Authentic architectural wood molding (Scandinavian Teak), 45° mitered corner joints, archival linen matting, and an ultra-subtle transparent floating telemetry HUD.*
+
+---
+
 
 ## ⚡ What Makes AstroFrame the GOAT?
 
@@ -155,12 +165,12 @@ Target Directory on TV:
 
 | Release | Architecture | Direct Download Link | Release Page |
 | :--- | :--- | :--- | :--- |
-| **v1.3.4 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.3.4.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.4.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
+| **v1.3.5 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.3.5.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.5.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
 | **All Releases** | Archives & History | [Browse All Releases](https://github.com/mandy321/AstroFrame/releases) | — |
 
 #### Quick Install to TV via ADB:
 ```bash
-adb install -r AstroFrame-v1.3.4.apk
+adb install -r AstroFrame-v1.3.5.apk
 ```
 
 ---
