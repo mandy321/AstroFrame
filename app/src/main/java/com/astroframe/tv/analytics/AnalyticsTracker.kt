@@ -76,4 +76,18 @@ object AnalyticsTracker {
             )
         )
     }
+    fun trackScreensaverStopped(durationSeconds: Long, rotationSpeedSec: Int) {
+        val durationMinutes = kotlin.math.round((durationSeconds / 60.0) * 100.0) / 100.0
+        val durationHours = kotlin.math.round((durationSeconds / 3600.0) * 100.0) / 100.0
+        track(
+            "screensaver_stopped",
+            mapOf(
+                "duration_seconds" to durationSeconds,
+                "duration_minutes" to durationMinutes,
+                "duration_hours" to durationHours,
+                "rotation_speed_sec" to rotationSpeedSec,
+                "mode" to if (rotationSpeedSec == 0) "static" else "rotating"
+            )
+        )
+    }
 }

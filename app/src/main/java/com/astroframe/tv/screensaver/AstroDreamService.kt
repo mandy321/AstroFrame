@@ -30,6 +30,7 @@ class AstroDreamService : DreamService() {
     private var currentIndex = 0
     private var currentBitmap: Bitmap? = null
     private var nextBitmap: Bitmap? = null
+    private var sessionStartTimeMs: Long = 0L
 
     private val rotationRunnable = object : Runnable {
         override fun run() {
@@ -57,6 +58,7 @@ class AstroDreamService : DreamService() {
         super.onDreamingStarted()
         Log.d(TAG, "AstroFrame Screensaver started dreaming")
 
+        sessionStartTimeMs = System.currentTimeMillis()
         // Track live screensaver activation
         com.astroframe.tv.analytics.AnalyticsTracker.trackScreensaverStarted(prefs.screensaverRotationSeconds)
 
@@ -79,6 +81,14 @@ class AstroDreamService : DreamService() {
     override fun onDreamingStopped() {
         super.onDreamingStopped()
         Log.d(TAG, "AstroFrame Screensaver stopped dreaming")
+        if (sessionStartTimeMs > 0L) {
+            val durationSec = (System.currentTimeMillis() - sessionStartTimeMs) / 1000L
+            com.astroframe.tv.analytics.AnalyticsTracker.trackScreensaverStopped(
+                durationSeconds = durationSec,
+                rotationSpeedSec = prefs.screensaverRotationSeconds
+            )
+            sessionStartTimeMs = 0L
+        }
         stopSlideshow()
     }
 
