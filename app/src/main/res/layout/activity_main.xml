@@ -259,6 +259,19 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Check for Updates Button -->
+            <Button
+                android:id="@+id/btnCheckUpdates"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Check for Updates 🚀"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_blue"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
             <!-- Setup Guide Button -->
             <Button
                 android:id="@+id/btnSetupGuide"

@@ -2,6 +2,9 @@ package com.astroframe.tv.ui
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.astroframe.tv.update.UpdateManager
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -37,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         com.astroframe.tv.analytics.AnalyticsTracker.trackAppOpen("main_activity")
 
         setupButtons()
+        lifecycleScope.launch {
+            UpdateManager.checkForUpdates(this@MainActivity, silentIfUpToDate = true)
+        }
         observeWorkManager()
         refreshUiState()
 
@@ -102,6 +108,14 @@ class MainActivity : AppCompatActivity() {
         // 8. Open TV Screensaver Settings Shortcut
         binding.btnScreensaverSettings.setOnClickListener {
             openSystemScreensaverSettings()
+        }
+
+        // Check for Updates Button
+        binding.btnCheckUpdates.setOnClickListener {
+            Toast.makeText(this, "Checking for latest AstroFrame updates...", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                UpdateManager.checkForUpdates(this@MainActivity, silentIfUpToDate = false)
+            }
         }
 
         // 9. Setup Guide Dialog
