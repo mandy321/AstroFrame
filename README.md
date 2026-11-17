@@ -155,5 +155,55 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ---
 
+---
+
+## ❓ Frequently Asked Questions (FAQ)
+
+<details>
+<summary><b>1. Does AstroFrame require the paid (Premium) version of Projectivy Launcher?</b></summary>
+<br>
+
+**No, AstroFrame is 100% free and does NOT require Projectivy Premium.**
+* **As a Native TV Screensaver (`DreamService`)**: Works completely standalone and free on all Android TV, Google TV, and Fire TV devices. You don't even need Projectivy installed. Simply click *"Set as TV Screensaver 📺"* in the app.
+* **System Wallpaper**: AstroFrame also automatically updates the native Android TV system wallpaper via `WallpaperManager` for launchers that read the system background.
+* **About Projectivy**: If you specifically want to set Projectivy's personal home screen background to a custom *User Folder* (`/sdcard/Pictures/AstroFrame/`), that specific setting in Projectivy is a Projectivy Premium feature. All screensaver modes, 4K artwork rotations, 10-bit color, and OLED Care features in AstroFrame are completely free.
+</details>
+
+<details>
+<summary><b>2. Why was my screensaver showing a black screen when I picked "The Met Museum"?</b></summary>
+<br>
+
+When switching to **The Met Museum**, high-resolution 4K/8K uncompressed scans must first be downloaded to the TV storage. 
+* In **v1.2.1**, if the screensaver started before that initial download finished, it would time out.
+* **Solution**: Simply open the app and tap **"Update Wallpaper Now"** once while on Museum mode. 
+* *Note: The latest code now automatically triggers an immediate background download upon selecting the collection and includes an active polling retry loop so the screen never stays black.*
+</details>
+
+<details>
+<summary><b>3. Is my TV at risk of OLED burn-in if I leave it on all day?</b></summary>
+<br>
+
+**No.** AstroFrame is engineered specifically with an **Active OLED Care Engine**. Every 90 seconds, it applies an imperceptible micro-drift shift (`[-3..+3]px`) to the artwork canvas and floating HUD. Static subpixel retention is eliminated, making it 100% safe for LG OLED, Sony Bravia QD-OLED, and Samsung OLED screens.
+</details>
+
+<details>
+<summary><b>4. How do I control the screensaver with my TV remote?</b></summary>
+<br>
+
+AstroFrame features full Leanback D-pad remote interactivity:
+* **Right Arrow / Next**: Jump to next artwork.
+* **Left Arrow / Previous**: Go back to previous artwork.
+* **OK / Center Button**: Toggle the Apple tvOS-style translucent metadata card (title, credit, telescope details).
+* **Play/Pause / Down Arrow**: Freeze rotation on any artwork you want to keep on screen.
+* **Back / Home**: Wake the TV and exit.
+</details>
+
+<details>
+<summary><b>5. Does AstroFrame consume a lot of internet bandwidth like video screensavers?</b></summary>
+<br>
+
+**No.** Conventional video screensavers (like Apple TV aerial loops) stream 15–25 GB of 4K video per day. AstroFrame uses cached uncompressed 4K stills paired with a **60 FPS hardware Ken Burns motion engine**, consuming **less than 100 MB per day** while providing crystal-clear 10-bit color depth.
+</details>
+
 ## 📄 License
 MIT License. Astronomy photos and explanations courtesy of the [NASA APOD API](https://api.nasa.gov/) and [The Metropolitan Museum of Art Open Access](https://www.metmuseum.org/).
