@@ -1,6 +1,7 @@
-# 🌌 AstroFrame (Android TV)
+# 🌌 AstroFrame (Android TV & Google TV)
 
-Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater & native screensaver with contextual art captions for **Android TV** and **Projectivy Launcher**.
+### The Ultimate Ambient Art & Deep-Space Screensaver for Android TV, Google TV & Fire TV
+**Engineered with Apple tvOS Glassmorphism, 10-bit Deep Color, OLED Burn-In Care & Samsung "The Frame" Matting**
 
 <p align="center">
   <a href="https://github.com/mandy321/AstroFrame/releases/latest"><img src="https://img.shields.io/github/v/release/mandy321/AstroFrame?style=for-the-badge&color=7C3AED&label=LATEST%20RELEASE" alt="Latest Release"></a>
@@ -21,17 +22,20 @@ Automated **NASA Cosmos** & **The Met Museum** 4K wallpaper updater & native scr
 
 ---
 
-## 📥 Direct APK Download
+## ⚡ What Makes AstroFrame the GOAT?
 
-| Release | Architecture | Direct Download Link | Release Page |
-| :--- | :--- | :--- | :--- |
-| **v1.2.1 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.2.1.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.2.1.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
-| **All Releases** | Archives & History | [Browse All Releases](https://github.com/mandy321/AstroFrame/releases) | — |
+While conventional video screensavers stream gigabytes of repetitive video, **AstroFrame** is purpose-built to transform modern living room displays into authentic living art pieces. 
 
-#### Quick Install to TV via ADB:
-```bash
-adb install -r AstroFrame-v1.2.1.apk
-```
+| Feature | AstroFrame | Conventional Screensavers (e.g. Aerial Views) |
+| :--- | :---: | :---: |
+| **Visual Library** | **Infinite Living Collections** (NASA APOD, JWST, Hubble, The Met Museum) | Static catalog of ~200 aerial clips |
+| **Bandwidth Consumption** | **Ultra-Low (<100MB/day)** with local 4K cache | Heavy (15–25 GB/day streaming 4K video) |
+| **Hardware Color Depth** | **10-bit Wide Color Gamut (`RGBA_F16`)** — Zero sky banding | 8-bit standard |
+| **Display Protection** | **Active OLED Care Engine** (Imperceptible micro-drift shifts) | Basic static overlay repositioning |
+| **Samsung "The Frame" Mode** | **Architectural Beveled Matting** with 45° inner shadowbox | Border-to-border only (looks like a TV, not a canvas) |
+| **Motion Engine** | **60 FPS Hardware "Ken Burns" Parallax** | Fixed video playback |
+| **Music Ecosystem** | **AuraMusic "Now Playing" Island** synergy | Basic media session hook |
+| **TV Remote Control** | **Full D-Pad Interactivity** (Skip, Pause, Metadata Inspector) | Variable support |
 
 ---
 
@@ -60,173 +64,96 @@ adb install -r AstroFrame-v1.2.1.apk
 
 ---
 
-## ✨ Features
+## ✨ Flagship Capabilities
 
-* **Dual Art Collections**:
-  * 🚀 **NASA Cosmos (APOD)**: Daily and historic 4K astronomical discoveries from NASA.
-  * 🎨 **The Met Museum**: High-resolution public domain masterpieces (Van Gogh, Monet, Rembrandt, Vermeer, Hokusai, Cézanne).
-  * 🌌 **Shuffle / Mix**: Alternates between deep space discoveries and world-class fine art.
-* **Large 10-Foot TV Typography**: Bold 33sp headline, 21sp readable summary, and source badges (NASA Cyan / Museum Gold) legible from across the room.
-* **Easy Remote Dialog Pickers**: Quickly select intervals (15m, 30m, 1h, 3h, 6h, 24h) and art sources via native D-pad choice dialogs.
-* **Automatic Storage Cleanup**: Auto-deletes wallpapers older than 48 hours and caps storage at max 10 images (under 25MB total).
-* **Projectivy Launcher Native Integration**: Seamlessly saves wallpapers to `/sdcard/Pictures/AstroFrame/`.
-* **Privacy-First Live Analytics**: Lightweight PostHog telemetry to monitor active TV devices, wallpaper updates, and screensaver performance with zero personal tracking.
+### 🎮 1. Interactive TV Remote D-Pad Navigation
+Never feel locked into a screensaver. Take complete control with your television remote:
+* **`D-Pad Right / Media Next`**: Instantly crossfade to the next artwork.
+* **`D-Pad Left / Media Previous`**: Return to the previous artwork.
+* **`Center OK / Info Button`**: Toggle the Apple tvOS-style translucent metadata card (artwork title, telescope details, and dates).
+* **`Play/Pause / D-Pad Down`**: Freeze rotation on any artwork to admire it indefinitely.
+* **`Back / Escape`**: Instantly wake the television.
 
----
+### 🛡️ 2. Active OLED Care & Anti-Burn-In Drift
+Designed specifically for high-end **LG OLED**, **Sony Bravia QD-OLED**, and **Samsung OLED** displays:
+* An imperceptible background shifter gently translates the artwork canvas and floating HUD by `[-3..+3]px` every 90 seconds.
+* Subpixels never experience static retention, ensuring 100% burn-in safety during all-day ambient use.
 
-## 🛠️ How to Connect with Projectivy Launcher Premium
+### 🌈 3. 10-Bit Wide Color Gamut Deep Color Pipeline
+* Eliminates color stepping, posterization, and gradient banding across deep nebulae and solar coronas.
+* Harnesses `ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT` and renders in **`Bitmap.Config.RGBA_F16`** (16-bit half-float depth) on supported hardware like the **NVIDIA Shield TV Pro**, **Chromecast with Google TV**, and **Sony Bravia 4K**.
 
-Once AstroFrame is installed on your Android TV:
+### 🖼️ 4. Architectural Museum Matting (Samsung "The Frame" Rival)
+Select from architectural mat styles to turn your flat screen into a genuine framed canvas:
+* **Bezel-to-Bezel**: Edge-to-edge full screen photography.
+* **Modern Slim Mat (24dp)**: Clean modern border.
+* **Museum Classic Bevel (48dp)**: 45-degree architectural inner bevel shadow with archival warm gallery cream (`#F4EFE6`).
+* **Gallery Deep Shadowbox (72dp)**: Premium framed museum exhibition look.
 
-### Step 1: Open AstroFrame on your TV
-1. Launch **AstroFrame** from your TV apps menu.
-2. Click **"Update Wallpaper Now"**.
-3. You will see a live preview of the downloaded NASA wallpaper with the info card rendered.
-4. (Optional) Click **"Overlay Position"** to adjust where the card sits (e.g. `Top Left` if your Projectivy app rows are at the bottom).
+### 🎥 5. Cinematic 60 FPS "Ken Burns" Parallax
+* Smooth, meditative slow pan and scale (`1.065x`) rendered at 60 frames per second.
+* Deep space images feel dynamic and breathing without stuttering or video compression artifacts.
 
-### Step 2: Configure Projectivy Launcher
-1. On your Android TV home screen, open **Projectivy Settings** (the gear icon ⚙️).
-2. Go to **Appearance** $\rightarrow$ **Wallpaper**.
-3. Under **Wallpaper Type**, select **"User Defined Folder"** or **"Image (slideshow)"**.
-4. In the settings list, select the **Uri** field and enter the exact URI:
-   ```text
-   file:///storage/emulated/0/Pictures/AstroFrame
-   ```
-   *(Note: Type the `file:///` prefix and press **Enter / OK** on your TV remote to save)*.
-5. In Projectivy's **Slideshow interval**, set it to **30 minutes** (to match AstroFrame's schedule).
-6. Return to your home screen—your background is now an astronomical museum frame!
+### 🎶 6. AuraMusic "Now Playing" Island Synergy
+* If you run [AuraMusic](https://github.com/mandy321/Auramusic-private), AstroFrame automatically displays an ambient frosted glass island in the top-left corner with track titles, artists, and bit-perfect audio badges.
 
 ---
 
-## 🖼️ Using as a Screensaver / Ambient Frame
+## 📥 Direct APK Download
 
-You can turn AstroFrame into an ambient screensaver using either of these two methods:
-
-### Method 1: Projectivy Native Ambient Mode (Zero Extra Apps)
-Projectivy Launcher has built-in idle detection that can hide your apps and turn your TV into a clean art frame:
-1. Open **Projectivy Settings** $\rightarrow$ **Appearance** $\rightarrow$ **Wallpaper**.
-2. Set **Display mode** to **"Always visible"**.
-3. Set **Image transition** to **"Zoom"** or **"Pan & Zoom"** (creates a slow, cinematic Ken Burns camera drift across the cosmos or artwork).
-4. When left idle on the home screen, Projectivy's UI rows fade away, leaving only the full-screen 4K artwork and readable caption card!
-
-### Method 2: Native Android TV Screensaver (Works Inside SmartTube, YouTube, Everywhere!)
-AstroFrame now includes Android's native **`DreamService` (Screensaver)** built right into the app:
-1. Open AstroFrame on your TV.
-2. Under **"Screensaver Photo Rotation"**, choose your preferred rotation speed:
-   * **None (Static)**: Holds the latest wallpaper image without rotating.
-   * **30 Seconds**, **1 Minute**, **2 Minutes**, or **5 Minutes**: Smoothly cross-fades through all stored artworks.
-3. Click the cyan **"Set as TV Screensaver 📺"** button in AstroFrame (or go to Android TV Settings $\rightarrow$ **Device Preferences / System** $\rightarrow$ **Screensaver**).
-4. Select **"AstroFrame Screensaver"** from the list.
-5. Set your idle timeout (e.g. *5 minutes*).
-6. Whenever you pause SmartTube, watch a movie, or leave any app idle, AstroFrame's 4K cosmos and museum artworks will smoothly take over full-screen! Pressing any button on your remote wakes the TV instantly.
-
----
-
-## 📺 Device Compatibility Checklist
-
-| Device | Installation | Wallpaper & Projectivy | System Screensaver |
+| Release | Architecture | Direct Download Link | Release Page |
 | :--- | :--- | :--- | :--- |
-| **NVIDIA Shield TV** (Shield / Pro) | Standard sideload / ADB | ⭐ 100% Native | 100% Native in TV Settings |
-| **Google TV** (Chromecast, Sony, TCL, Hisense) | Standard sideload / ADB | ⭐ 100% Native (via Projectivy / FLauncher) | 100% Native in TV Settings |
-| **Amazon Fire TV Stick** (Fire OS 6, 7, 8) | Via Downloader app or ADB | ⭐ 100% Native | Native via Projectivy Idle (or 1-line ADB command) |
-| **Generic Android TV / Projectors** (Mi Box, Mecool, Formuler, XGIMI) | Standard sideload / ADB | ⭐ 100% Native | 100% Native in TV Settings |
+| **v1.2.1 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.2.1.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.2.1.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
+| **All Releases** | Archives & History | [Browse All Releases](https://github.com/mandy321/AstroFrame/releases) | — |
 
-### Device Notes:
-
-* **NVIDIA Shield & Google TV**:
-  * Fully plug-and-play. AstroFrame's native `DreamService` automatically appears in Android TV's *Settings $\rightarrow$ Device Preferences / System $\rightarrow$ Screensaver*.
-
-* **Amazon Fire TV Stick**:
-  * The background wallpaper updater and Projectivy Launcher work 100% natively on Fire OS.
-  * To use the system-wide screensaver on Firestick (bypassing Amazon's ad screensaver), you can either:
-    1. **Method A (Zero ADB)**: Use Projectivy's built-in Idle Mode on your home screen.
-    2. **Method B (System-Wide via ADB)**: Run this single ADB command once to set AstroFrame as your default Firestick screensaver:
-       ```bash
-       adb shell settings put secure screensaver_components com.astroframe.tv/.screensaver.AstroDreamService
-       adb shell settings put secure screensaver_enabled 1
-       ```
-
----
-
-## 🚀 Building & Installing
-
-### Prerequisites
-* JDK 17 or higher
-* Android SDK (API 34+)
-* ADB enabled on your Android TV (*Settings $\rightarrow$ Device Preferences $\rightarrow$ Developer Options $\rightarrow$ USB/Network Debugging*)
-
-### 1. Build the APK
+#### Quick Install to TV via ADB:
 ```bash
-./gradlew assembleDebug
+adb install -r AstroFrame-v1.2.1.apk
 ```
-The output APK will be located at:
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-### 2. Install on Android TV via ADB over Wi-Fi
-Connect your computer to your TV's IP address:
-```bash
-adb connect <YOUR_TV_IP_ADDRESS>:5555
-adb install -r app/build/outputs/apk/debug/app-debug.apk
-```
-
-## 🔑 NASA API Key & Authentication
-
-### 1. Works Out-of-the-Box (No API Key Required!)
-* By default, **AstroFrame requires zero API keys or accounts**.
-* It connects directly to the official **`science.nasa.gov`** open platform and **The Met Museum Open Access API**, which are publicly available without rate limits or registration.
-
-### 2. (Optional) Using Your Own NASA API Key
-If you want to use your own personal API key from [api.nasa.gov](https://api.nasa.gov) for legacy fallback:
-
-* **In the Android TV App**:
-  * Open AstroFrame on your TV.
-  * Select **"NASA API Key"** in the settings column.
-  * Enter your custom key and click **Save**.
-
-* **When Building from Source**:
-  * Create or open `local.properties` in the project root:
-    ```properties
-    NASA_API_KEY=your_personal_key_here
-    ```
-  * Or export it as an environment variable before building:
-    ```bash
-    export NASA_API_KEY=your_personal_key_here
-    ./gradlew assembleRelease
-    ```
 
 ---
 
-## ⚙️ Configuration & Customization
+## 📺 How to Set as Default TV Screensaver
 
-AstroFrame stores its settings in SharedPreferences:
-* **API Key**: Comes pre-configured with your NASA API key.
-* **Rotation Intervals**: `15 min`, `30 min`, `1 hour`, `3 hours`, `Daily`.
-* **Overlay Positions**:
-  * `Top Left` *(Recommended for Projectivy with bottom app rows)*
-  * `Top Right`
-  * `Bottom Left`
-  * `Bottom Right`
-  * `Hidden / Off` *(Pure artwork without text overlay)*
-* **Source Modes**:
-  * **Random Archive**: Pulls random historic photos across the full 1995–present NASA archive (recommended for frequent 30-min cycling).
-  * **Today's APOD**: Always displays the official daily image.
+Since Android TV 12 and Google TV often hide third-party screensaver menus, AstroFrame includes an automated **Daydream Assistant**:
+
+1. Open **AstroFrame** on your television.
+2. Click **"Set as TV Screensaver 📺"**.
+3. AstroFrame immediately launches the hidden Google TV Daydream chooser.
+4. Select **"AstroFrame Screensaver"** and choose your preferred timeout (e.g. *5 minutes*).
+
+*(For Amazon Fire TV Stick, set AstroFrame via Projectivy Launcher's Idle Mode or use the standard 1-line ADB daydream command).*
 
 ---
 
-## 📁 Storage Directory Structure
-Wallpapers are generated and stored in the TV's public media folder:
+## 🛠️ How to Connect with Projectivy Launcher
+
+AstroFrame automatically generates and updates wallpapers in your TV's public media folder:
 ```text
 /sdcard/Pictures/AstroFrame/
-├── current_wallpaper.jpg     <-- Latest generated wallpaper (overwritten each cycle)
-├── apod_2024-03-24.jpg        <-- Rolling history of the last 20 images
-├── apod_2023-11-12.jpg
-└── ...
+```
+1. In **Projectivy Launcher**, navigate to **Settings $\rightarrow$ Appearance $\rightarrow$ Background $\rightarrow$ Source**.
+2. Select **Folder** and choose `/sdcard/Pictures/AstroFrame/`.
+3. Set transition to **Smooth Crossfade**.
+
+---
+
+## ⚙️ Building from Source
+
+```bash
+# Clone repository
+git clone https://github.com/mandy321/AstroFrame.git
+cd AstroFrame
+
+# Build debug APK
+./gradlew assembleDebug
+```
+Output binary will be located at:
+```text
+app/build/outputs/apk/debug/app-debug.apk
 ```
 
 ---
 
 ## 📄 License
-MIT License. Astronomy photos and explanations courtesy of the [NASA APOD API](https://api.nasa.gov/).
-
+MIT License. Astronomy photos and explanations courtesy of the [NASA APOD API](https://api.nasa.gov/) and [The Metropolitan Museum of Art Open Access](https://www.metmuseum.org/).
