@@ -23,8 +23,8 @@ android {
         applicationId = "com.astroframe.tv"
         minSdk = 26
         targetSdk = 35
-        versionCode = 13
-        versionName = "1.3.7"
+        versionCode = 14
+        versionName = "1.3.8"
 
         buildConfigField("String", "NASA_API_KEY", "\"$nasaApiKey\"")
         buildConfigField("String", "POSTHOG_API_KEY", "\"phc_xPxgwuPe2FD7dV4mJYSBeVbzbicvF3KMRxb2z6BEUZCZ\"")

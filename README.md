@@ -12,8 +12,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.7.apk">
-    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.3.7-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.8.apk">
+    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.3.8-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
   </a>
   <a href="https://github.com/mandy321/AstroFrame/releases/latest">
     <img src="https://img.shields.io/badge/📦_ALL_RELEASES-GITHUB-blue?style=for-the-badge&logo=github&color=2563EB" alt="All Releases" height="40">
