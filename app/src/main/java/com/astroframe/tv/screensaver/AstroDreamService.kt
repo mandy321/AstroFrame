@@ -431,15 +431,22 @@ class AstroDreamService : DreamService() {
 
         txtArtworkTitle.text = title
 
-        val dateAndSource = "${prefs.lastDate.ifBlank { "Archival" }} • ${prefs.artSource.badge}"
-        val explanation = prefs.lastExplanation
-        val combinedSubtitle = if (explanation.isNotBlank() && !explanation.equals(title, ignoreCase = true)) {
-            "$dateAndSource — $explanation"
+        val badge = if (prefs.lastSourceBadge.isNotBlank()) {
+            prefs.lastSourceBadge.replace("✦", "").trim()
         } else {
-            dateAndSource
+            prefs.artSource.badge.replace("✦", "").trim()
+        }
+        val dateStr = prefs.lastDate.trim()
+        val creditStr = prefs.lastCopyright.trim()
+
+        val subtitle = when {
+            creditStr.isNotBlank() && dateStr.isNotBlank() -> "$badge • $dateStr • $creditStr"
+            dateStr.isNotBlank() -> "$badge • $dateStr"
+            creditStr.isNotBlank() -> "$badge • $creditStr"
+            else -> badge
         }
 
-        txtArtworkSubtitle.text = combinedSubtitle
+        txtArtworkSubtitle.text = subtitle
 
         revealTelemetry()
     }

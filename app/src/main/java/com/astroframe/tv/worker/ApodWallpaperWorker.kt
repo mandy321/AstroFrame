@@ -141,6 +141,8 @@ class ApodWallpaperWorker(
             prefs.lastTitle = apod.title
             prefs.lastDate = apod.date
             prefs.lastExplanation = apod.summaryExplanation
+            prefs.lastSourceBadge = apod.sourceBadge
+            prefs.lastCopyright = apod.copyright ?: ""
             prefs.lastUpdatedMs = System.currentTimeMillis()
             prefs.lastImagePath = savedFile.absolutePath
 

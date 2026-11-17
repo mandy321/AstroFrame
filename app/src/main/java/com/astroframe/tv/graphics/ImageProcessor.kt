@@ -155,97 +155,110 @@ class ImageProcessor(private val context: Context) {
     ) {
         if (position == OverlayPosition.NONE) return
 
-        // 100% Floating Gallery Typography (Zero Opaque Box, Pure Art Immersion)
-        val textWidth = 860
-        val marginX = 64f
-        val marginY = 56f
-        val blockHeight = 130f
+        // Clean source & attribution without redundant description
+        val sourceLabel = when {
+            apod.sourceBadge.isNotBlank() -> apod.sourceBadge.replace("✦", "").trim()
+            else -> "Gallery Collection"
+        }
+        val dateText = apod.date.trim()
+        val creditText = apod.copyright?.replace("\n", " ")?.trim()
 
-        val left: Float
-        val top: Float
-
-        when (position) {
-            OverlayPosition.TOP_LEFT -> {
-                left = marginX
-                top = marginY
-            }
-            OverlayPosition.TOP_RIGHT -> {
-                left = CANVAS_WIDTH - textWidth - marginX
-                top = marginY
-            }
-            OverlayPosition.BOTTOM_LEFT -> {
-                left = marginX
-                top = CANVAS_HEIGHT - blockHeight - marginY
-            }
-            OverlayPosition.BOTTOM_RIGHT -> {
-                left = CANVAS_WIDTH - textWidth - marginX
-                top = CANVAS_HEIGHT - blockHeight - marginY
-            }
-            OverlayPosition.NONE -> return
+        val subtitleText = when {
+            !creditText.isNullOrBlank() && dateText.isNotBlank() -> "$sourceLabel • $dateText • $creditText"
+            dateText.isNotBlank() -> "$sourceLabel • $dateText"
+            !creditText.isNullOrBlank() -> "$sourceLabel • $creditText"
+            else -> sourceLabel
         }
 
-        var currentY = top
-
-        // 1. Artwork Title (Crisp white with studio drop shadow)
+        // Measure text with exact paints
         val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
-            textSize = 28f
+            textSize = 25f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            setShadowLayer(6f, 1.5f, 1.5f, Color.argb(235, 0, 0, 0))
+            setShadowLayer(6f, 1.2f, 1.2f, Color.argb(235, 0, 0, 0))
         }
+
+        val subPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#E0E6ED")
+            textSize = 15f
+            typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
+            letterSpacing = 0.02f
+            setShadowLayer(5f, 1f, 1f, Color.argb(220, 0, 0, 0))
+        }
+
+        val maxTextWidth = 600
         val titleLayout = StaticLayout.Builder.obtain(
             apod.title,
             0,
             apod.title.length,
             titlePaint,
-            textWidth
+            maxTextWidth
         )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setMaxLines(1)
             .setEllipsize(android.text.TextUtils.TruncateAt.END)
             .build()
 
-        canvas.save()
-        canvas.translate(left, currentY)
-        titleLayout.draw(canvas)
-        canvas.restore()
-        currentY += titleLayout.height + 4f
-
-        // 2. Description Summary & Attribution (Elegant, subtle soft silver with drop shadow)
-        val descPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#E0E6ED")
-            textSize = 18f
-            typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-            setShadowLayer(4f, 1.2f, 1.2f, Color.argb(220, 0, 0, 0))
-        }
-
-        val credit = if (!apod.copyright.isNullOrBlank()) {
-            "${apod.sourceBadge} • ${apod.date} • ${apod.copyright.replace("\n", " ").trim()}"
-        } else {
-            "${apod.sourceBadge} • ${apod.date}"
-        }
-        val summary = apod.summaryExplanation
-        val combinedDesc = if (summary.isNotBlank() && !summary.equals(apod.title, ignoreCase = true)) {
-            "$credit — $summary"
-        } else {
-            credit
-        }
-
-        val descLayout = StaticLayout.Builder.obtain(
-            combinedDesc,
+        val subLayout = StaticLayout.Builder.obtain(
+            subtitleText,
             0,
-            combinedDesc.length,
-            descPaint,
-            textWidth
+            subtitleText.length,
+            subPaint,
+            maxTextWidth
         )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-            .setMaxLines(2)
+            .setMaxLines(1)
             .setEllipsize(android.text.TextUtils.TruncateAt.END)
             .build()
 
+        val textWidth = maxOf(
+            if (titleLayout.lineCount > 0) titleLayout.getLineWidth(0) else 0f,
+            if (subLayout.lineCount > 0) subLayout.getLineWidth(0) else 0f
+        )
+        val padH = 16f
+        val padV = 9f
+        val contentWidth = textWidth + (padH * 2f)
+        val contentHeight = titleLayout.height + subLayout.height + 2f + (padV * 2f)
+
+        val marginX = 48f
+        val marginY = 40f
+
+        val left: Float = when (position) {
+            OverlayPosition.TOP_LEFT, OverlayPosition.BOTTOM_LEFT -> marginX
+            OverlayPosition.TOP_RIGHT, OverlayPosition.BOTTOM_RIGHT -> CANVAS_WIDTH - contentWidth - marginX
+            OverlayPosition.NONE -> return
+        }
+
+        val top: Float = when (position) {
+            OverlayPosition.TOP_LEFT, OverlayPosition.TOP_RIGHT -> marginY
+            OverlayPosition.BOTTOM_LEFT, OverlayPosition.BOTTOM_RIGHT -> CANVAS_HEIGHT - contentHeight - marginY
+            OverlayPosition.NONE -> return
+        }
+
+        // Ultra-transparent whisper tint: 6% black with delicate hairline border (compact, takes minimal space)
+        val cardRect = RectF(left, top, left + contentWidth, top + contentHeight)
+        val cardPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.argb(16, 0, 0, 0)
+            style = Paint.Style.FILL
+        }
+        val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.argb(20, 255, 255, 255)
+            style = Paint.Style.STROKE
+            strokeWidth = 0.8f
+        }
+        canvas.drawRoundRect(cardRect, 14f, 14f, cardPaint)
+        canvas.drawRoundRect(cardRect, 14f, 14f, borderPaint)
+
+        // Draw Title
         canvas.save()
-        canvas.translate(left, currentY)
-        descLayout.draw(canvas)
+        canvas.translate(left + padH, top + padV)
+        titleLayout.draw(canvas)
+        canvas.restore()
+
+        // Draw Subtitle
+        canvas.save()
+        canvas.translate(left + padH, top + padV + titleLayout.height + 2f)
+        subLayout.draw(canvas)
         canvas.restore()
     }
 

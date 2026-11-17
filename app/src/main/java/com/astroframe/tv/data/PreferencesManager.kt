@@ -52,6 +52,8 @@ class PreferencesManager(context: Context) {
         private const val KEY_LAST_EXPLANATION = "last_explanation"
         private const val KEY_LAST_UPDATED_MS = "last_updated_ms"
         private const val KEY_LAST_IMAGE_PATH = "last_image_path"
+        private const val KEY_LAST_SOURCE_BADGE = "last_source_badge"
+        private const val KEY_LAST_COPYRIGHT = "last_copyright"
         private const val KEY_ART_SOURCE = "art_source"
         private const val KEY_CUSTOM_API_URL = "custom_api_url"
         private const val KEY_SCREENSAVER_ROTATION = "screensaver_rotation_sec"
@@ -105,6 +107,14 @@ class PreferencesManager(context: Context) {
     var lastImagePath: String
         get() = prefs.getString(KEY_LAST_IMAGE_PATH, "") ?: ""
         set(value) = prefs.edit().putString(KEY_LAST_IMAGE_PATH, value).apply()
+
+    var lastSourceBadge: String
+        get() = prefs.getString(KEY_LAST_SOURCE_BADGE, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_LAST_SOURCE_BADGE, value).apply()
+
+    var lastCopyright: String
+        get() = prefs.getString(KEY_LAST_COPYRIGHT, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_LAST_COPYRIGHT, value).apply()
 
     var artSource: ArtSource
         get() {

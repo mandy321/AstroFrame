@@ -191,7 +191,20 @@ class MainActivity : AppCompatActivity() {
 
         if (prefs.lastTitle.isNotBlank()) {
             binding.tvCurrentTitle.text = prefs.lastTitle
-            binding.tvCurrentDateCredit.text = "${prefs.lastDate} • ${prefs.artSource.badge}"
+            val badge = if (prefs.lastSourceBadge.isNotBlank()) {
+                prefs.lastSourceBadge.replace("✦", "").trim()
+            } else {
+                prefs.artSource.badge.replace("✦", "").trim()
+            }
+            val artDate = prefs.lastDate.trim()
+            val creditStr = prefs.lastCopyright.trim()
+            val subtitle = when {
+                creditStr.isNotBlank() && artDate.isNotBlank() -> "$badge • $artDate • $creditStr"
+                artDate.isNotBlank() -> "$badge • $artDate"
+                creditStr.isNotBlank() -> "$badge • $creditStr"
+                else -> badge
+            }
+            binding.tvCurrentDateCredit.text = subtitle
             binding.tvCurrentExplanation.text = prefs.lastExplanation
 
             val dateStr = if (prefs.lastUpdatedMs > 0) {
