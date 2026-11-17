@@ -20,11 +20,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 object UpdateManager {
 
     private const val TAG = "UpdateManager"
-    private const val GITHUB_LATEST_RELEASE_API = "https://api.github.com/repos/mandy321/AstroFrame/releases/latest"
+    private const val POSTHOG_FLAG_KEY = "app_update_info"
+    private const val GITHUB_LATEST_RELEASE_URL = "https://api.github.com/repos/mandy321/AstroFrame/releases/latest"
 
     data class UpdateInfo(
         val latestVersionCode: Int,
@@ -33,67 +35,122 @@ object UpdateManager {
         val releaseNotes: String
     )
 
-    suspend fun checkForUpdates(context: Context, silentIfUpToDate: Boolean = true) {
-        val update = queryUpdateInfo()
+    suspend fun checkForUpdates(context: Context, silentIfUpToDate: Boolean = false) = withContext(Dispatchers.Main) {
+        val update = withContext(Dispatchers.IO) {
+            fetchUpdateFromPostHog() ?: fetchUpdateFromGitHub()
+        }
 
-        withContext(Dispatchers.Main) {
-            if (update != null && update.latestVersionCode > BuildConfig.VERSION_CODE) {
-                showUpdatePromptDialog(context, update)
-            } else if (!silentIfUpToDate) {
-                Toast.makeText(context, "AstroFrame is already up to date (v${BuildConfig.VERSION_NAME})", Toast.LENGTH_SHORT).show()
+        val currentVersionCode = BuildConfig.VERSION_CODE
+        val currentVersionName = BuildConfig.VERSION_NAME
+
+        val isNewer = if (update != null) {
+            if (update.latestVersionCode > 0 && update.latestVersionCode > currentVersionCode) {
+                true
+            } else {
+                isVersionStringNewer(update.latestVersionName, currentVersionName)
+            }
+        } else false
+
+        if (update != null && isNewer) {
+            showUpdatePromptDialog(context, update)
+        } else {
+            if (!silentIfUpToDate) {
+                Toast.makeText(
+                    context,
+                    "AstroFrame is up to date (v$currentVersionName)",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-    private suspend fun queryUpdateInfo(): UpdateInfo? = withContext(Dispatchers.IO) {
-        // 1. First check PostHog Feature Flag Payload ("app_update_info")
+    private fun isVersionStringNewer(remote: String, local: String): Boolean {
+        val rClean = remote.removePrefix("v").trim()
+        val lClean = local.removePrefix("v").trim()
+        if (rClean == lClean) return false
+
+        val rParts = rClean.split(".").mapNotNull { it.toIntOrNull() }
+        val lParts = lClean.split(".").mapNotNull { it.toIntOrNull() }
+
+        val maxLen = maxOf(rParts.size, lParts.size)
+        for (i in 0 until maxLen) {
+            val rVal = rParts.getOrElse(i) { 0 }
+            val lVal = lParts.getOrElse(i) { 0 }
+            if (rVal > lVal) return true
+            if (rVal < lVal) return false
+        }
+        return false
+    }
+
+    private fun fetchUpdateFromPostHog(): UpdateInfo? {
         try {
-            val payload = PostHog.getFeatureFlagPayload("app_update_info")
-            if (payload is Map<*, *>) {
-                val code = (payload["latest_version_code"] as? Number)?.toInt() ?: 0
-                val name = payload["latest_version_name"] as? String ?: ""
-                val url = payload["download_url"] as? String ?: ""
-                val notes = payload["release_notes"] as? String ?: "New features and performance improvements."
-                if (code > 0 && url.isNotBlank()) {
-                    Log.d(TAG, "Update detected via PostHog Remote Config: v$name ($code)")
-                    return@withContext UpdateInfo(code, name, url, notes)
-                }
+            // PostHog SDK caches feature flags or fetches async
+            PostHog.reloadFeatureFlags()
+            val payload = PostHog.getFeatureFlagPayload(POSTHOG_FLAG_KEY, null) ?: return null
+            Log.d(TAG, "PostHog flag raw payload: $payload")
+
+            val jsonStr = when (payload) {
+                is String -> payload
+                is Map<*, *> -> JSONObject(payload).toString()
+                else -> payload.toString()
+            }
+
+            val json = JSONObject(jsonStr)
+            val code = json.optInt("latest_version_code", 0)
+            val name = json.optString("latest_version_name", "")
+            val url = json.optString("download_url", "")
+            val notes = json.optString("release_notes", "Performance improvements and bug fixes.")
+
+            if (name.isNotBlank() && url.isNotBlank()) {
+                return UpdateInfo(
+                    latestVersionCode = code,
+                    latestVersionName = name,
+                    downloadUrl = url,
+                    releaseNotes = notes
+                )
             }
         } catch (e: Exception) {
             Log.w(TAG, "PostHog update check error: ${e.message}")
         }
+        return null
+    }
 
-        // 2. Fallback: Query GitHub Releases API directly
+    private fun fetchUpdateFromGitHub(): UpdateInfo? {
+        val client = OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(10, TimeUnit.SECONDS)
+            .build()
+
+        val request = Request.Builder()
+            .url(GITHUB_LATEST_RELEASE_URL)
+            .addHeader("User-Agent", "AstroFrame-Updater")
+            .build()
+
         try {
-            val client = OkHttpClient()
-            val request = Request.Builder()
-                .url(GITHUB_LATEST_RELEASE_API)
-                .addHeader("User-Agent", "AstroFrame-AndroidTV")
-                .build()
-
             client.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) return@withContext null
-                val body = response.body?.string() ?: return@withContext null
-                val json = JSONObject(body)
+                if (!response.isSuccessful) return null
+                val bodyStr = response.body?.string() ?: return null
+                val json = JSONObject(bodyStr)
 
-                val tagName = json.optString("tag_name", "").removePrefix("v")
-                val releaseNotes = json.optString("body", "New features & bug fixes.")
-                val assets = json.optJSONArray("assets") ?: return@withContext null
+                val tagName = json.optString("tag_name", "").removePrefix("v").trim()
+                val releaseNotes = json.optString("body", "What's new in v$tagName")
+                val assets = json.optJSONArray("assets")
 
                 var downloadUrl = ""
-                for (i in 0 until assets.length()) {
-                    val asset = assets.getJSONObject(i)
-                    val assetName = asset.optString("name", "")
-                    if (assetName.endsWith(".apk")) {
-                        downloadUrl = asset.optString("browser_download_url", "")
-                        break
+                if (assets != null) {
+                    for (i in 0 until assets.length()) {
+                        val asset = assets.getJSONObject(i)
+                        val name = asset.optString("name", "")
+                        if (name.endsWith(".apk", ignoreCase = true)) {
+                            downloadUrl = asset.optString("browser_download_url", "")
+                            break
+                        }
                     }
                 }
 
                 if (tagName.isNotBlank() && downloadUrl.isNotBlank()) {
-                    val remoteVersionCode = parseVersionCodeFromTag(tagName)
-                    return@withContext UpdateInfo(
-                        latestVersionCode = remoteVersionCode,
+                    return UpdateInfo(
+                        latestVersionCode = parseVersionCodeFromTag(tagName),
                         latestVersionName = tagName,
                         downloadUrl = downloadUrl,
                         releaseNotes = releaseNotes
@@ -103,11 +160,10 @@ object UpdateManager {
         } catch (e: Exception) {
             Log.w(TAG, "GitHub release check error: ${e.message}")
         }
-        null
+        return null
     }
 
     private fun parseVersionCodeFromTag(tag: String): Int {
-        // e.g. "1.3.0" -> 10300 or split parts
         val parts = tag.split(".")
         return try {
             val major = parts.getOrNull(0)?.toInt() ?: 1
@@ -153,7 +209,6 @@ object UpdateManager {
 
         val downloadId = downloadManager.enqueue(request)
 
-        // Broadcast receiver for download completion
         val onComplete = object : BroadcastReceiver() {
             override fun onReceive(ctxt: Context?, intent: Intent?) {
                 val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1L) ?: -1L
