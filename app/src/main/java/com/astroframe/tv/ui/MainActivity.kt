@@ -231,6 +231,10 @@ class MainActivity : AppCompatActivity() {
             .setSingleChoiceItems(labels, currentIndex) { dialog, which ->
                 val selectedSource = sources[which]
                 prefs.artSource = selectedSource
+                binding.progressBar.visibility = View.VISIBLE
+                binding.btnRefreshNow.isEnabled = false
+                binding.tvStatus.text = "Fetching initial artwork for " + selectedSource.label + "..."
+                ApodWallpaperWorker.triggerImmediate(this)
                 updateArtSourceButtonText()
                 Toast.makeText(this, "Collection set to ${selectedSource.label}", Toast.LENGTH_SHORT).show()
                 dialog.dismiss()

@@ -198,12 +198,9 @@ class AstroDreamService : DreamService() {
         }
 
         if (imageFiles.isEmpty()) {
-            Log.w(TAG, "No wallpaper images found, triggering immediate fetch")
+            Log.w(TAG, "No wallpaper images found on TV storage, triggering immediate fetch")
             ApodWallpaperWorker.triggerImmediate(this)
-            handler.postDelayed({
-                reloadFiles()
-                startSlideshow()
-            }, 4000L)
+            pollForImagesAndStart(attempt = 1)
             return
         }
 
@@ -270,6 +267,23 @@ class AstroDreamService : DreamService() {
             }
         }
         return super.dispatchKeyEvent(event)
+    }
+
+    private fun pollForImagesAndStart(attempt: Int) {
+        if (attempt > 6) {
+            Log.e(TAG, "Max polling attempts reached waiting for wallpaper fetch")
+            return
+        }
+        handler.postDelayed({
+            reloadFiles()
+            if (imageFiles.isNotEmpty()) {
+                Log.d(TAG, "Wallpaper ready after poll attempt $attempt")
+                startSlideshow()
+            } else {
+                Log.d(TAG, "Still waiting for wallpaper, polling attempt ${attempt + 1}...")
+                pollForImagesAndStart(attempt + 1)
+            }
+        }, 3000L)
     }
 
     private fun reloadFiles() {
@@ -468,7 +482,8 @@ class AstroDreamService : DreamService() {
     }
 
     private fun decodeImageFile(file: File): Bitmap? {
-        return try {
+        // Attempt 1: 10-bit wide color gamut (RGBA_F16 or ARGB_8888)
+        try {
             val options = BitmapFactory.Options().apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && prefs.wideColorGamut10Bit) {
                     inPreferredConfig = Bitmap.Config.RGBA_F16
@@ -476,9 +491,22 @@ class AstroDreamService : DreamService() {
                     inPreferredConfig = Bitmap.Config.ARGB_8888
                 }
             }
-            BitmapFactory.decodeFile(file.absolutePath, options)
+            val bmp = BitmapFactory.decodeFile(file.absolutePath, options)
+            if (bmp != null) return bmp
+        } catch (e: OutOfMemoryError) {
+            Log.w(TAG, "OOM decoding ${file.name} in 10-bit, falling back to RGB_565", e)
         } catch (e: Exception) {
-            Log.e(TAG, "Failed decoding ${file.name}", e)
+            Log.w(TAG, "Failed 10-bit decode for ${file.name}: ${e.message}")
+        }
+
+        // Attempt 2: Fallback to RGB_565 (safe memory footprint for all Android TV devices)
+        return try {
+            val fallbackOptions = BitmapFactory.Options().apply {
+                inPreferredConfig = Bitmap.Config.RGB_565
+            }
+            BitmapFactory.decodeFile(file.absolutePath, fallbackOptions)
+        } catch (e: Exception) {
+            Log.e(TAG, "All decode attempts failed for ${file.name}", e)
             null
         }
     }
