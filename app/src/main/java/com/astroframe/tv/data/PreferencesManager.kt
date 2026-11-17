@@ -4,11 +4,18 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.astroframe.tv.BuildConfig
 
-enum class MatStyle(val label: String, val paddingDp: Int) {
-    NONE("Bezel-to-Bezel (Full Screen)", 0),
-    SLIM_MODERN("Modern Slim Mat (24dp)", 24),
-    MUSEUM_CLASSIC("Museum Classic Bevel (48dp)", 48),
-    GALLERY_DEEP("Gallery Deep Shadowbox (72dp)", 72);
+enum class MatStyle(
+    val label: String,
+    val paddingDp: Int,
+    val woodType: String = "NONE" // NONE, TEAK, WALNUT, BIRCH, EBONY, GOLD_LEAF, WARM_WHITE
+) {
+    NONE("Bezel-to-Bezel (Full Screen)", 0, "NONE"),
+    OAK_TEAK_WOOD("Natural Scandinavian Teak Wood", 32, "TEAK"),
+    WALNUT_LUXURY("Dark Walnut Wood & Archival Mat", 44, "WALNUT"),
+    MODERN_EBONY("Gallery Ebony Black Wood Frame", 36, "EBONY"),
+    ROYAL_GOLD_LEAF("Museum Gilded Antique Gold Leaf", 40, "GOLD_LEAF"),
+    BIRCH_MINIMAL("Nordic White Birch Wood", 32, "BIRCH"),
+    MUSEUM_CLASSIC("Museum Archival Linen Mat (Warm Off-White)", 48, "WARM_WHITE");
 
     fun next(): MatStyle {
         val values = entries.toTypedArray()

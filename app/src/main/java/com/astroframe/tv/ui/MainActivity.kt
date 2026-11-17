@@ -125,6 +125,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // About & Version Info Dialog
+        binding.btnAbout.setOnClickListener {
+            showAboutDialog()
+        }
+
         // 9. Setup Guide Dialog
         binding.btnSetupGuide.setOnClickListener {
             showProjectivyGuideDialog()
@@ -435,7 +440,7 @@ Supported formats: JPG, PNG, WEBP (up to 4K / 8K).
     }
 
     private fun updateMatStyleButtonText() {
-        binding.btnMatStyle.text = "Mat Frame: " + prefs.matStyle.label
+        binding.btnMatStyle.text = "Frame: " + prefs.matStyle.label
     }
 
     private fun updateOledCareButtonText() {
@@ -497,7 +502,42 @@ Supported formats: JPG, PNG, WEBP (up to 4K / 8K).
             .show()
     }
 
-        private fun openSystemScreensaverSettings() {
+        
+    private fun showAboutDialog() {
+        val version = com.astroframe.tv.BuildConfig.VERSION_NAME
+        val versionCode = com.astroframe.tv.BuildConfig.VERSION_CODE
+        val buildType = com.astroframe.tv.BuildConfig.BUILD_TYPE
+
+        val msg = """
+✨ AstroFrame for Android TV & Google TV
+Version: v$version (Build $versionCode)
+Channel: Production ($buildType)
+
+Transform your Living Room TV into a world-class gallery & deep space observatory:
+• Realistic Wood Molding Frames (Teak, Walnut, Ebony, Gilded Gold Leaf, Birch)
+• NASA Deep Space Observatory & JWST
+• World Museum Masterpieces (The Met, Rijksmuseum, Art Institute of Chicago)
+• Earth from Orbit 4K ISS Astronaut Views
+• Custom Personal Photo & 4K Wallpaper Feeds
+• OLED Burn-in Protection & Ken Burns Parallax
+
+Created with ❤️ for Android TV & Projectivy Launcher.
+GitHub: github.com/mandy321/AstroFrame
+        """.trimIndent()
+
+        AlertDialog.Builder(this)
+            .setTitle("ℹ️ About AstroFrame")
+            .setMessage(msg)
+            .setPositiveButton("OK", null)
+            .setNeutralButton("Check for Updates") { _, _ ->
+                lifecycleScope.launch {
+                    UpdateManager.checkForUpdates(this@MainActivity, silentIfUpToDate = false)
+                }
+            }
+            .show()
+    }
+
+    private fun openSystemScreensaverSettings() {
         val intents = listOf(
             // 1. Android TV / Google TV Direct Daydream Chooser
             android.content.Intent().setClassName("com.android.tv.settings", "com.android.tv.settings.device.display.daydream.DaydreamActivity"),

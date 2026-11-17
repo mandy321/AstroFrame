@@ -223,7 +223,7 @@
                 android:id="@+id/btnMatStyle"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
-                android:text="Mat Frame: Full Screen"
+                android:text="Frame: Teak Wood 🪵"
                 android:background="@drawable/tv_button_bg"
                 android:textColor="@color/accent_cyan"
                 android:textSize="15sp"
@@ -289,6 +289,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:text="Check for Updates 🚀"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/accent_blue"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
+            <!-- About & Version Info Button -->
+            <Button
+                android:id="@+id/btnAbout"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="About AstroFrame ℹ️"
                 android:background="@drawable/tv_button_bg"
                 android:textColor="@color/accent_blue"
                 android:textSize="15sp"
