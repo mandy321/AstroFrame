@@ -90,9 +90,17 @@ class ApodWallpaperWorker(
             }
 
             ArtSource.CUSTOM_USER_FOLDER -> {
-                CustomArtManager.fetchRandomCustomArtwork() ?: run {
-                    Log.w(TAG, "User folder empty, providing guide and fallback")
-                    worldMuseumClient.fetchMasterpiece() ?: apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+                val customUrl = prefs.customApiUrl
+                if (customUrl.isNotBlank()) {
+                    CustomArtManager.fetchFromCustomUrl(customUrl) 
+                        ?: CustomArtManager.fetchRandomCustomArtwork()
+                        ?: worldMuseumClient.fetchMasterpiece()
+                        ?: apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+                } else {
+                    CustomArtManager.fetchRandomCustomArtwork() ?: run {
+                        Log.w(TAG, "User folder empty, providing guide and fallback")
+                        worldMuseumClient.fetchMasterpiece() ?: apodClient.fetchApod(apiKey = apiKey, random = prefs.useRandom)
+                    }
                 }
             }
 

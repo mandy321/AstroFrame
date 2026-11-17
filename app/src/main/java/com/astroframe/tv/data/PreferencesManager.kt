@@ -46,6 +46,7 @@ class PreferencesManager(context: Context) {
         private const val KEY_LAST_UPDATED_MS = "last_updated_ms"
         private const val KEY_LAST_IMAGE_PATH = "last_image_path"
         private const val KEY_ART_SOURCE = "art_source"
+        private const val KEY_CUSTOM_API_URL = "custom_api_url"
         private const val KEY_SCREENSAVER_ROTATION = "screensaver_rotation_sec"
         private const val KEY_OLED_CARE_ENABLED = "oled_care_enabled"
         private const val KEY_MAT_STYLE = "mat_style"
@@ -131,4 +132,8 @@ class PreferencesManager(context: Context) {
     var screensaverRotationSeconds: Int
         get() = prefs.getInt(KEY_SCREENSAVER_ROTATION, 60)
         set(value) = prefs.edit().putInt(KEY_SCREENSAVER_ROTATION, value).apply()
+
+    var customApiUrl: String
+        get() = prefs.getString(KEY_CUSTOM_API_URL, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_CUSTOM_API_URL, value.trim()).apply()
 }

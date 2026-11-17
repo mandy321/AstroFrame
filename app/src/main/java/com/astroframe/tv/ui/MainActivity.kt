@@ -51,12 +51,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        // 1. Refresh Now
+        // 1. Refresh Now (Updates screen immediately and continues rotation)
         binding.btnRefreshNow.setOnClickListener {
             binding.progressBar.visibility = View.VISIBLE
-            binding.tvStatus.text = "Fetching new wallpaper from ${prefs.artSource.label}..."
+            binding.tvStatus.text = "Fetching and applying new artwork immediately..."
             binding.btnRefreshNow.isEnabled = false
             ApodWallpaperWorker.triggerImmediate(this)
+            // Reschedule periodic worker so interval restarts from now
+            ApodWallpaperWorker.schedulePeriodic(this, prefs.intervalMinutes, forceReplace = true)
+        }
+
+        // Set as TV Wallpaper Shortcut
+        binding.btnWallpaperSettings.setOnClickListener {
+            openSystemWallpaperSettings()
         }
 
         // 2. Overlay Position Dialog
@@ -162,6 +169,9 @@ class MainActivity : AppCompatActivity() {
         updateModeButtonText()
         updateScreensaverButtonText()
 
+        // Apply live mat style to preview
+        binding.previewMuseumFrame.setMatStyle(prefs.matStyle)
+
         val lastPath = prefs.lastImagePath
         if (lastPath.isNotBlank()) {
             val imgFile = File(lastPath)
@@ -262,29 +272,102 @@ class MainActivity : AppCompatActivity() {
     private fun showCustomFolderInstructionsDialog() {
         val customDir = com.astroframe.tv.data.CustomArtManager.getCustomArtDirectory()
         val currentCount = com.astroframe.tv.data.CustomArtManager.getCustomPhotoCount()
+        val currentUrl = prefs.customApiUrl
+
+        val urlInfo = if (currentUrl.isNotBlank()) "\n\nActive Custom URL Feed:\n$currentUrl" else ""
 
         val msg = """
-            📁 Custom Personal Art & Photos is now active!
-            
-            Current Photos Detected: $currentCount
-            
-            How to add your own photos & art:
-            1. Copy your JPG/PNG photos or 4K wallpaper files to:
-               ${customDir.absolutePath}
-            
-            Ways to copy files to your TV:
-            • USB Drive: Plug in a flash drive and copy files using any TV file manager.
-            • Send Files to TV (SFTTV): Free app on Google Play to beam photos from your phone.
-            • Local Network / SMB: Transfer via Wi-Fi from your PC or Mac.
-            • ADB Command:
-              adb push /path/to/photos/* ${customDir.absolutePath}/
-            
-            Once files are added, AstroFrame will seamlessly shuffle them on your TV screensaver and wallpaper!
+📁 Custom Art & Personal Gallery is active!
+
+Local Photos Detected: $currentCount$urlInfo
+
+Choose an option below:
+• 'Enter Custom URL': Stream from any JSON feed, Google Drive direct link, Imgur album, or image endpoint.
+• 'Folder Instructions': Learn how to transfer photos via USB, phone, or Wi-Fi to:
+  ${customDir.absolutePath}
         """.trimIndent()
 
         AlertDialog.Builder(this)
-            .setTitle("📁 How to Add Your Own Photos")
+            .setTitle("📁 Custom Art & Photos Setup")
             .setMessage(msg)
+            .setPositiveButton("Enter Custom URL") { dialog, _ ->
+                dialog.dismiss()
+                showCustomUrlInputDialog()
+            }
+            .setNeutralButton("Folder Guide") { dialog, _ ->
+                dialog.dismiss()
+                showDetailedFolderGuide()
+            }
+            .setNegativeButton("Done") { dialog, _ ->
+                binding.progressBar.visibility = View.VISIBLE
+                binding.btnRefreshNow.isEnabled = false
+                ApodWallpaperWorker.triggerImmediate(this)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showCustomUrlInputDialog() {
+        val input = android.widget.EditText(this).apply {
+            setText(prefs.customApiUrl)
+            hint = "https://example.com/art.json or direct .jpg/.png"
+            setSingleLine(true)
+            setTextColor(android.graphics.Color.WHITE)
+            setPadding(40, 30, 40, 30)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Custom URL Feed / Endpoint")
+            .setMessage("""
+Enter a custom image URL or JSON API endpoint:
+
+Supported Formats:
+1. Direct Image URL (.jpg, .png, .webp)
+2. JSON Object:
+   {"url": "https://...", "title": "My Art", "explanation": "..."}
+3. JSON Array of items:
+   [{"url": "https://...", "title": "Art 1"}, {"url": "https://...", "title": "Art 2"}]
+
+AstroFrame will automatically pull and rotate wallpapers from this feed!
+            """.trimIndent())
+            .setView(input)
+            .setPositiveButton("Save & Fetch") { _, _ ->
+                val newUrl = input.text.toString().trim()
+                prefs.customApiUrl = newUrl
+                Toast.makeText(this, if (newUrl.isNotBlank()) "Custom URL Feed saved" else "Custom URL cleared", Toast.LENGTH_SHORT).show()
+                binding.progressBar.visibility = View.VISIBLE
+                binding.btnRefreshNow.isEnabled = false
+                ApodWallpaperWorker.triggerImmediate(this)
+            }
+            .setNeutralButton("Clear URL") { _, _ ->
+                prefs.customApiUrl = ""
+                Toast.makeText(this, "Cleared custom URL. Using local folder.", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showDetailedFolderGuide() {
+        val customDir = com.astroframe.tv.data.CustomArtManager.getCustomArtDirectory()
+        val guide = """
+How to transfer your personal photos to TV:
+
+1. Target Directory on TV:
+   ${customDir.absolutePath}
+
+2. Transfer Methods:
+   • USB Flash Drive: Plug into TV USB port and copy files using FX File Explorer or TV File Commander.
+   • Send Files to TV (SFTTV): Free app on Google Play TV store. Send files from your Android phone or PC directly.
+   • Local Network / SMB: Access your TV over Wi-Fi network storage.
+   • Computer (ADB Command):
+     adb push /path/to/photos/* ${customDir.absolutePath}/
+
+Supported formats: JPG, PNG, WEBP (up to 4K / 8K).
+        """.trimIndent()
+
+        AlertDialog.Builder(this)
+            .setTitle("📁 TV Folder Transfer Guide")
+            .setMessage(guide)
             .setPositiveButton("Got It") { dialog, _ ->
                 binding.progressBar.visibility = View.VISIBLE
                 binding.btnRefreshNow.isEnabled = false
@@ -371,6 +454,7 @@ class MainActivity : AppCompatActivity() {
                 val selectedStyle = styles[which]
                 prefs.matStyle = selectedStyle
                 updateMatStyleButtonText()
+                binding.previewMuseumFrame.setMatStyle(selectedStyle)
                 Toast.makeText(this, "Mat style: " + selectedStyle.label, Toast.LENGTH_SHORT).show()
                 dialog.dismiss()
             }
@@ -435,6 +519,42 @@ class MainActivity : AppCompatActivity() {
             }
         }
         Toast.makeText(this, "Open TV Settings > System > Ambient Mode / Screensaver", Toast.LENGTH_LONG).show()
+    }
+
+
+    private fun openSystemWallpaperSettings() {
+        // Attempt to apply current image immediately to system wallpaper
+        val lastPath = prefs.lastImagePath
+        if (lastPath.isNotBlank()) {
+            val imgFile = java.io.File(lastPath)
+            if (imgFile.exists()) {
+                try {
+                    val bmp = BitmapFactory.decodeFile(imgFile.absolutePath)
+                    if (bmp != null) {
+                        android.app.WallpaperManager.getInstance(this).setBitmap(bmp)
+                        Toast.makeText(this, "Applied current artwork to system wallpaper!", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.w("MainActivity", "Failed direct wallpaper set: ${e.message}")
+                }
+            }
+        }
+
+        val intents = listOf(
+            android.content.Intent(android.app.WallpaperManager.ACTION_LIVE_WALLPAPER_CHOOSER),
+            android.content.Intent(android.content.Intent.ACTION_SET_WALLPAPER),
+            android.content.Intent().setClassName("com.android.tv.settings", "com.android.tv.settings.device.display.daydream.DaydreamActivity"),
+            android.content.Intent(android.provider.Settings.ACTION_DISPLAY_SETTINGS)
+        )
+
+        for (intent in intents) {
+            try {
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+                return
+            } catch (_: Exception) {}
+        }
+        Toast.makeText(this, "Wallpaper active! Open TV Settings > Display / Wallpaper", Toast.LENGTH_LONG).show()
     }
 
 }
