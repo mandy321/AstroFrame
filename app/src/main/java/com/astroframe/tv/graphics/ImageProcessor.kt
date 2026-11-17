@@ -155,11 +155,11 @@ class ImageProcessor(private val context: Context) {
     ) {
         if (position == OverlayPosition.NONE) return
 
-        // High-end Gallery Minimalist Floating Pill (Whisper-light 10% translucent glass)
-        val pillWidth = 580f
-        val pillHeight = 110f
-        val marginX = 54f
-        val marginY = 46f
+        // 100% Floating Gallery Typography (Zero Opaque Box, Pure Art Immersion)
+        val textWidth = 860
+        val marginX = 64f
+        val marginY = 56f
+        val blockHeight = 130f
 
         val left: Float
         val top: Float
@@ -170,55 +170,35 @@ class ImageProcessor(private val context: Context) {
                 top = marginY
             }
             OverlayPosition.TOP_RIGHT -> {
-                left = CANVAS_WIDTH - pillWidth - marginX
+                left = CANVAS_WIDTH - textWidth - marginX
                 top = marginY
             }
             OverlayPosition.BOTTOM_LEFT -> {
                 left = marginX
-                top = CANVAS_HEIGHT - pillHeight - marginY
+                top = CANVAS_HEIGHT - blockHeight - marginY
             }
             OverlayPosition.BOTTOM_RIGHT -> {
-                left = CANVAS_WIDTH - pillWidth - marginX
-                top = CANVAS_HEIGHT - pillHeight - marginY
+                left = CANVAS_WIDTH - textWidth - marginX
+                top = CANVAS_HEIGHT - blockHeight - marginY
             }
             OverlayPosition.NONE -> return
         }
 
-        val right = left + pillWidth
-        val bottom = top + pillHeight
+        var currentY = top
 
-        // Whisper-light 10% dark glass tint with delicate hairline border
-        val pillRect = RectF(left, top, right, bottom)
-        val pillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(32, 0, 0, 0)
-            style = Paint.Style.FILL
-        }
-        val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(40, 255, 255, 255)
-            style = Paint.Style.STROKE
-            strokeWidth = 1f
-        }
-
-        canvas.drawRoundRect(pillRect, 22f, 22f, pillPaint)
-        canvas.drawRoundRect(pillRect, 22f, 22f, borderPaint)
-
-        val textLeft = left + 26f
-        val contentWidth = (pillWidth - 52f).toInt()
-        var currentY = top + 42f
-
-        // 1. Artwork Title (Clean, elegant 24sp white with drop shadow for 100% legibility)
+        // 1. Artwork Title (Crisp white with studio drop shadow)
         val titlePaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             color = Color.WHITE
-            textSize = 26f
+            textSize = 28f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
-            setShadowLayer(4f, 1f, 1f, Color.argb(220, 0, 0, 0))
+            setShadowLayer(6f, 1.5f, 1.5f, Color.argb(235, 0, 0, 0))
         }
         val titleLayout = StaticLayout.Builder.obtain(
             apod.title,
             0,
             apod.title.length,
             titlePaint,
-            contentWidth
+            textWidth
         )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setMaxLines(1)
@@ -226,20 +206,47 @@ class ImageProcessor(private val context: Context) {
             .build()
 
         canvas.save()
-        canvas.translate(textLeft, currentY)
+        canvas.translate(left, currentY)
         titleLayout.draw(canvas)
         canvas.restore()
-        currentY += titleLayout.height + 6f
+        currentY += titleLayout.height + 4f
 
-        // 2. Curated Subtitle (Date & Source Badge)
-        val subPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.parseColor("#CFD8DC")
-            textSize = 17f
+        // 2. Description Summary & Attribution (Elegant, subtle soft silver with drop shadow)
+        val descPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = Color.parseColor("#E0E6ED")
+            textSize = 18f
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.NORMAL)
-            setShadowLayer(3f, 1f, 1f, Color.argb(180, 0, 0, 0))
+            setShadowLayer(4f, 1.2f, 1.2f, Color.argb(220, 0, 0, 0))
         }
-        val subText = "${apod.date}  •  ${apod.sourceBadge}"
-        canvas.drawText(subText, textLeft, currentY + 18f, subPaint)
+
+        val credit = if (!apod.copyright.isNullOrBlank()) {
+            "${apod.sourceBadge} • ${apod.date} • ${apod.copyright.replace("\n", " ").trim()}"
+        } else {
+            "${apod.sourceBadge} • ${apod.date}"
+        }
+        val summary = apod.summaryExplanation
+        val combinedDesc = if (summary.isNotBlank() && !summary.equals(apod.title, ignoreCase = true)) {
+            "$credit — $summary"
+        } else {
+            credit
+        }
+
+        val descLayout = StaticLayout.Builder.obtain(
+            combinedDesc,
+            0,
+            combinedDesc.length,
+            descPaint,
+            textWidth
+        )
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setMaxLines(2)
+            .setEllipsize(android.text.TextUtils.TruncateAt.END)
+            .build()
+
+        canvas.save()
+        canvas.translate(left, currentY)
+        descLayout.draw(canvas)
+        canvas.restore()
     }
 
     private fun saveBitmapToStorage(bitmap: Bitmap, date: String): File? {

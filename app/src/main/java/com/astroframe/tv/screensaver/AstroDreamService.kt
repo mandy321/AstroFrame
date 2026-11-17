@@ -423,18 +423,23 @@ class AstroDreamService : DreamService() {
     }
 
     private fun updateTelemetryOverlay(file: File) {
-        val cleanName = file.nameWithoutExtension
-            .replace("current_wallpaper", prefs.lastTitle.ifBlank { "Deep Space Art" })
-            .replace("_", " ")
-
-        txtArtworkTitle.text = cleanName
-        txtArtworkSubtitle.text = prefs.artSource.label
-
-        txtTelemetryBadge.text = if (prefs.oledCareEnabled) {
-            "✦ 10-BIT WIDE GAMUT • OLED PIXEL-SHIFT ACTIVE"
+        val title = if (file.name.contains("current_wallpaper")) {
+            prefs.lastTitle.ifBlank { "AstroFrame Masterpiece" }
         } else {
-            "✦ 10-BIT HARDWARE DEPTH • THE FRAME MODE"
+            file.nameWithoutExtension.replace("_", " ")
         }
+
+        txtArtworkTitle.text = title
+
+        val dateAndSource = "${prefs.lastDate.ifBlank { "Archival" }} • ${prefs.artSource.badge}"
+        val explanation = prefs.lastExplanation
+        val combinedSubtitle = if (explanation.isNotBlank() && !explanation.equals(title, ignoreCase = true)) {
+            "$dateAndSource — $explanation"
+        } else {
+            dateAndSource
+        }
+
+        txtArtworkSubtitle.text = combinedSubtitle
 
         revealTelemetry()
     }

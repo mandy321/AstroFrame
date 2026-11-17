@@ -12,8 +12,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.5.apk">
-    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.3.5-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
+  <a href="https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.6.apk">
+    <img src="https://img.shields.io/badge/📥_DOWNLOAD_LATEST_APK-v1.3.6-success?style=for-the-badge&logo=android&logoColor=white&color=10B981" alt="Download APK" height="40">
   </a>
   <a href="https://github.com/mandy321/AstroFrame/releases/latest">
     <img src="https://img.shields.io/badge/📦_ALL_RELEASES-GITHUB-blue?style=for-the-badge&logo=github&color=2563EB" alt="All Releases" height="40">
@@ -165,12 +165,12 @@ Target Directory on TV:
 
 | Release | Architecture | Direct Download Link | Release Page |
 | :--- | :--- | :--- | :--- |
-| **v1.3.5 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.3.5.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.5.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
+| **v1.3.6 (Latest)** | Android TV / Fire TV (Universal) | [**⬇️ Download AstroFrame-v1.3.6.apk**](https://github.com/mandy321/AstroFrame/releases/latest/download/AstroFrame-v1.3.6.apk) | [Release Notes](https://github.com/mandy321/AstroFrame/releases/latest) |
 | **All Releases** | Archives & History | [Browse All Releases](https://github.com/mandy321/AstroFrame/releases) | — |
 
 #### Quick Install to TV via ADB:
 ```bash
-adb install -r AstroFrame-v1.3.5.apk
+adb install -r AstroFrame-v1.3.6.apk
 ```
 
 ---

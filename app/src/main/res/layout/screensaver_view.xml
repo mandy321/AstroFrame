@@ -35,21 +35,18 @@
 
     </com.astroframe.tv.ui.MuseumFrameView>
 
-    <!-- Top-Right: Ambient Clock & Weather Pill (Subtle, Compact & Transparent) -->
+    <!-- Top-Right: Pure Floating Clock & Ambient Status (Zero Box, Crystal Clear Legibility) -->
     <LinearLayout
         android:id="@+id/topBarPill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="44dp"
-        android:background="@drawable/bg_apple_frosted_glass"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="52dp"
+        android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingTop="6dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="6dp"
+        android:padding="0dp"
         android:elevation="0dp">
 
         <TextView
@@ -58,16 +55,20 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-light"
             android:text="10:25 AM"
-            android:textColor="#E0E6ED"
-            android:textSize="13sp"
-            android:letterSpacing="0.03" />
+            android:textColor="#F4F7FB"
+            android:textSize="14sp"
+            android:letterSpacing="0.04"
+            android:shadowColor="#EE000000"
+            android:shadowDx="1.5"
+            android:shadowDy="1.5"
+            android:shadowRadius="6" />
 
         <View
             android:layout_width="1dp"
-            android:layout_height="10dp"
+            android:layout_height="11dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:background="#33FFFFFF" />
+            android:background="#55FFFFFF" />
 
         <TextView
             android:id="@+id/txtWeatherBadge"
@@ -75,8 +76,12 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-light"
             android:text="Clear Skies ✦"
-            android:textColor="#9AB0D1"
-            android:textSize="12sp" />
+            android:textColor="#C8D4E2"
+            android:textSize="13sp"
+            android:shadowColor="#EE000000"
+            android:shadowDx="1.2"
+            android:shadowDy="1.2"
+            android:shadowRadius="5" />
 
     </LinearLayout>
 
@@ -131,20 +136,17 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Bottom-Left: Subtle Minimalist Artwork Description (Ultra-Transparent & Compact) -->
+    <!-- Bottom-Left: 100% Floating Gallery Typography (Zero Opaque Box, Pure Art Immersion) -->
     <LinearLayout
         android:id="@+id/telemetryPill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
-        android:layout_marginStart="44dp"
-        android:layout_marginBottom="36dp"
-        android:background="@drawable/bg_apple_frosted_glass"
+        android:layout_marginStart="52dp"
+        android:layout_marginBottom="42dp"
+        android:background="@android:color/transparent"
         android:orientation="vertical"
-        android:paddingStart="14dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
+        android:padding="0dp"
         android:elevation="0dp">
 
         <TextView
@@ -153,28 +155,31 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:text="AstroFrame Deep Space"
-            android:textColor="#F2F5F8"
-            android:textSize="14sp"
-            android:shadowColor="#CC000000"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="4" />
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:letterSpacing="0.02"
+            android:shadowColor="#EE000000"
+            android:shadowDx="1.5"
+            android:shadowDy="1.5"
+            android:shadowRadius="6" />
 
         <TextView
             android:id="@+id/txtArtworkSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="3dp"
             android:fontFamily="sans-serif-light"
-            android:text="NASA / ESA Observatory"
-            android:textColor="#C5D0DC"
-            android:textSize="11sp"
-            android:shadowColor="#AA000000"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="3" />
+            android:text="NASA / ESA Observatory • Description summary"
+            android:textColor="#E0E6ED"
+            android:textSize="12sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:shadowColor="#EE000000"
+            android:shadowDx="1.2"
+            android:shadowDy="1.2"
+            android:shadowRadius="5" />
 
-        <!-- Hidden telemetry badges & remote hints to keep screen pure & uncluttered -->
+        <!-- Hidden technical telemetry to maintain pure gallery aesthetics -->
         <TextView
             android:id="@+id/txtTelemetryBadge"
             android:layout_width="wrap_content"
