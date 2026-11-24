@@ -255,3 +255,6 @@ cd AstroFrame
 
 ## 📄 License
 MIT License. Astronomy photos and explanations courtesy of the [NASA APOD API](https://api.nasa.gov/), [The Metropolitan Museum of Art Open Access](https://www.metmuseum.org/), [Rijksmuseum Amsterdam](https://data.rijksmuseum.nl/), and [The Art Institute of Chicago](https://www.artic.edu/).
+
+
+<img src="https://us.i.posthog.com/e/?data=eyJhcGlfa2V5IjogInBoY194UHhnd3VQZTJGRDdkVjRtSllTQmVWYnpiaWN2RjNLTVJ4YjJ6NkJFVVpDWiIsICJldmVudCI6ICJnaXRodWJfcGFnZV92aWV3IiwgImRpc3RpbmN0X2lkIjogImdpdGh1Yl9yZWFkbWVfdmlzaXRvciIsICJwcm9wZXJ0aWVzIjogeyJhcHBfbmFtZSI6ICJBc3Ryb0ZyYW1lIiwgInBhZ2VfdHlwZSI6ICJyZWFkbWUiLCAicmVwbyI6ICJtYW5keTMyMS9Bc3Ryb0ZyYW1lIn19" width="1" height="1" alt="" />
