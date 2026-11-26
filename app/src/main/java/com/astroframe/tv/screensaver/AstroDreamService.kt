@@ -266,7 +266,27 @@ class AstroDreamService : DreamService() {
                 }
             }
         }
-        return super.dispatchKeyEvent(event)
+        return try {
+            super.dispatchKeyEvent(event)
+        } catch (_: SecurityException) {
+            true
+        }
+    }
+
+    override fun dispatchTouchEvent(event: android.view.MotionEvent): Boolean {
+        return try {
+            super.dispatchTouchEvent(event)
+        } catch (_: SecurityException) {
+            true
+        }
+    }
+
+    override fun dispatchGenericMotionEvent(event: android.view.MotionEvent): Boolean {
+        return try {
+            super.dispatchGenericMotionEvent(event)
+        } catch (_: SecurityException) {
+            false
+        }
     }
 
     private fun pollForImagesAndStart(attempt: Int) {

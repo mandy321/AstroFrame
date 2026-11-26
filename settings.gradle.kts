@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "AstroFrame"
 include(":app")
+include(":projectivyapi")
 

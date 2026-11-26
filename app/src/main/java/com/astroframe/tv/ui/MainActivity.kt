@@ -117,6 +117,11 @@ class MainActivity : AppCompatActivity() {
             openSystemScreensaverSettings()
         }
 
+        // 8b. Launch In-App Screensaver Preview
+        binding.btnPreviewScreensaver.setOnClickListener {
+            startActivity(android.content.Intent(this, com.astroframe.tv.screensaver.ScreensaverPreviewActivity::class.java))
+        }
+
         // Check for Updates Button
         binding.btnCheckUpdates.setOnClickListener {
             Toast.makeText(this, "Checking for latest AstroFrame updates...", Toast.LENGTH_SHORT).show()

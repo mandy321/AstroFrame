@@ -72,4 +72,7 @@ dependencies {
 
     // PostHog Analytics for live active user & install tracking
     implementation("com.posthog:posthog-android:3.+")
+
+    // Projectivy Launcher native wallpaper provider API
+    implementation(project(":projectivyapi"))
 }

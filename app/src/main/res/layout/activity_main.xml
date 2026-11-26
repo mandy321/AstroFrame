@@ -270,6 +270,19 @@
                 android:clickable="true"
                 android:layout_marginBottom="12dp" />
 
+            <!-- In-App Screensaver Preview -->
+            <Button
+                android:id="@+id/btnPreviewScreensaver"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Preview Screensaver"
+                android:background="@drawable/tv_button_bg"
+                android:textColor="@color/text_primary"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:clickable="true"
+                android:layout_marginBottom="12dp" />
+
             <!-- Set as Default TV Wallpaper Shortcut -->
             <Button
                 android:id="@+id/btnWallpaperSettings"

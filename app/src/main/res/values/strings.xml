@@ -19,5 +19,7 @@
     file:///storage/emulated/0/Pictures/AstroFrame
     (press Enter/OK on remote to save).
 5. (Optional) Set Slideshow interval to 30 minutes to match this app!]]></string>
+    <string name="projectivy_plugin_uuid">c4a8f1b2-7d3e-4c9a-9e12-5a7b8c9d0e1f</string>
+    <integer name="projectivy_cache_duration">1800000</integer>
 </resources>
 
