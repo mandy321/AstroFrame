@@ -49,7 +49,7 @@ class ImageProcessor(private val context: Context) {
         val finalBitmap = Bitmap.createBitmap(CANVAS_WIDTH, CANVAS_HEIGHT, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(finalBitmap)
 
-        drawArtworkWithSmartFraming(canvas, rawBitmap)
+        drawScaledCenterCrop(canvas, rawBitmap)
         rawBitmap.recycle()
 
         if (position != OverlayPosition.NONE) {
@@ -81,7 +81,7 @@ class ImageProcessor(private val context: Context) {
         val canvas = Canvas(finalBitmap)
 
         // 1. Draw scaled / center-cropped background
-        drawArtworkWithSmartFraming(canvas, rawBitmap)
+        drawScaledCenterCrop(canvas, rawBitmap)
         rawBitmap.recycle()
 
         // 2. Render Overlay if requested
@@ -124,62 +124,6 @@ class ImageProcessor(private val context: Context) {
             Log.e(TAG, "Error downloading bitmap", e)
             null
         }
-    }
-
-    private fun drawArtworkWithSmartFraming(canvas: Canvas, source: Bitmap) {
-        val srcAspect = source.width.toFloat() / source.height.coerceAtLeast(1).toFloat()
-        val dstAspect = CANVAS_WIDTH.toFloat() / CANVAS_HEIGHT.toFloat()
-        if (srcAspect < dstAspect * 0.82f) {
-            drawBlurredBackgroundFitCenter(canvas, source)
-        } else {
-            drawScaledCenterCrop(canvas, source)
-        }
-    }
-
-    private fun drawBlurredBackgroundFitCenter(canvas: Canvas, source: Bitmap) {
-        val blurW = 192
-        val blurH = 108
-        val smallBg = Bitmap.createBitmap(blurW, blurH, Bitmap.Config.ARGB_8888)
-        val bgCanvas = Canvas(smallBg)
-
-        val bgScale = maxOf(blurW.toFloat() / source.width, blurH.toFloat() / source.height)
-        val bgDx = (blurW - source.width * bgScale) / 2f
-        val bgDy = (blurH - source.height * bgScale) / 2f
-        val bgMatrix = Matrix().apply {
-            postScale(bgScale, bgScale)
-            postTranslate(bgDx, bgDy)
-        }
-        bgCanvas.drawBitmap(source, bgMatrix, Paint(Paint.FILTER_BITMAP_FLAG))
-
-        BlurHelper.applyBoxBlur(smallBg, radius = 10)
-
-        val dstRect = Rect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
-        canvas.drawBitmap(smallBg, null, dstRect, Paint(Paint.FILTER_BITMAP_FLAG))
-        smallBg.recycle()
-
-        canvas.drawColor(Color.argb(105, 6, 10, 18))
-
-        val fgScale = minOf(
-            CANVAS_WIDTH.toFloat() / source.width,
-            CANVAS_HEIGHT.toFloat() / source.height
-        )
-        val scaledW = source.width * fgScale
-        val scaledH = source.height * fgScale
-        val fgDx = (CANVAS_WIDTH - scaledW) / 2f
-        val fgDy = (CANVAS_HEIGHT - scaledH) / 2f
-
-        val fgRect = RectF(fgDx, fgDy, fgDx + scaledW, fgDy + scaledH)
-        val shadowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.argb(160, 0, 0, 0)
-            setShadowLayer(28f, 0f, 8f, Color.argb(200, 0, 0, 0))
-        }
-        canvas.drawRect(fgRect, shadowPaint)
-
-        val fgMatrix = Matrix().apply {
-            postScale(fgScale, fgScale)
-            postTranslate(fgDx, fgDy)
-        }
-        canvas.drawBitmap(source, fgMatrix, Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG))
     }
 
     private fun drawScaledCenterCrop(canvas: Canvas, source: Bitmap) {
